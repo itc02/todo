@@ -1,3 +1,6 @@
 Rails.application.routes.draw do
-  post 'addTodo', to: 'add_todos#add_todo'
+  get 'getTodos', to: 'todos#index'
+  post 'addTodo', to: 'todos#add_todo'
+  get 'getUsers', to: 'users#index'
+  post 'addUser', to: 'users#add_user'
 end
