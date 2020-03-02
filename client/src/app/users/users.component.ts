@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'users',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UsersComponent implements OnInit {
 
-  constructor() { }
+  users: Object;
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+      console.log(allUsers)
+      this.users = allUsers;
+    })
   }
 
 }

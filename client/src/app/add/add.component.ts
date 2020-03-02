@@ -6,23 +6,48 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.css']
 })
-export class AddComponent implements OnInit {
-  descriptionName = 'description';
-  assignToName = 'assignTo';
-  
-  constructor(private http: HttpClient) {
-    console.log(8484)
-    this.http.post('http://localhost:3000/addTodo', {hello: 'hello'}).toPromise().then(data => {
-      console.log(data)
-    }).catch(err => {
-      console.log(err)
+
+export class AddComponent implements OnInit{
+  description : string = '';
+  assignTo : string = '';
+  newUser : string = '';
+  users : Object;
+
+  constructor(private http: HttpClient) { }
+
+  ngOnInit(){
+    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+      this.users = allUsers;
     })
   }
 
-  ngOnInit(): void {
+  onInput(e: any): void {
+    this.description = e.target.value;
+  }
+
+  onSelect(e: any): void {
+    this.assignTo = e.target.value;
+  }
+
+  onAddUser(e: any): void {
+    this.newUser = e.target.value;
   }
   
   onSubmit(): void {
-    console.log(this)
+    this.http.post('http://localhost:3000/addTodo', {
+      date: new Date().toLocaleDateString(),
+      description: this.description,
+      assignTo: this.assignTo
+    }).subscribe(data => {
+      console.log(data)
+    })
+  }
+
+  onSubmitUser(): void {
+    this.http.post('http://localhost:3000/addUser', {
+      name: this.newUser
+    }).subscribe((data => {
+      console.log(data)
+    }))
   }
 }

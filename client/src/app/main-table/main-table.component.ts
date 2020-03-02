@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-interface Todo{
-  id: number,
-  date: string,
-  description: string,
-  assigned_to: string
-}
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'main-table',
@@ -15,14 +9,14 @@ interface Todo{
 
 
 export class MainTableComponent implements OnInit {
-  todos: Todo[] = [
-    { id: 1, date: new Date().toLocaleDateString(), description: 'Wash dishes', assigned_to: 'Levon'}, 
-    { id: 2, date: new Date().toLocaleDateString(), description: 'By eggs', assigned_to: 'Angela'}, 
-    { id: 3, date: new Date().toLocaleDateString(), description: 'Feed dog', assigned_to: 'John'}
-  ]
+  todos: Object
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    
+    this.http.get('http://localhost:3000/getTodos').subscribe(allTodos => {
+      this.todos = allTodos
+    });
   }
 
 }

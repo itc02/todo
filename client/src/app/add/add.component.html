@@ -1,12 +1,14 @@
-<form action="post" (ngSubmit)="onSubmit()">
-    <p>Description</p>
-    <textarea></textarea>
-    <p>Assign to:</p>
-    <select>
-        <option>Levon</option>
-        <option>Korova</option>
-        <option>Myasnik</option>
-    </select>
-    <br>
-    <button type="submit">Add</button>
-</form>
+<h1>Add Todo</h1>
+<p>Description</p>
+<textarea (input)="onInput($event)"></textarea>
+<p>Assign to:</p>
+<select (change)="onSelect($event)">
+    <option disabled>Select user</option>
+    <option *ngFor="let user of users">{{ user.name }}</option>
+</select>
+<br>
+<button (click)="onSubmit()">Add</button>
+<h1>Add user</h1>
+<input type="text" (input)="onAddUser($event)">
+<br>
+<button (click)="onSubmitUser()">Add</button>
