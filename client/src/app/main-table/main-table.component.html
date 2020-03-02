@@ -1,0 +1,24 @@
+<div>
+<p>TODOs</p>
+<table>
+    <thead>
+        <th></th>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Assigned to</th>
+        <th colspan="3">Actions</th>
+    </thead>
+    <tbody *ngFor="let todo of todos">
+        <tr>
+            <td>{{ todo.id }}</td>
+            <td>{{ todo.date }}</td>
+            <td>{{ todo.description }}</td>
+            <td>{{ todo.assigned_to }}</td>
+            <td>Edit</td>
+            <td>Delete</td>
+            <td>Line through</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<users></users>

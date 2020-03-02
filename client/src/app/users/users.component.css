@@ -1,0 +1,12 @@
+p{
+    text-align: right;
+}
+
+ul{
+    width: 200px;
+    float: right;
+}
+
+ul li {
+    list-style: none;
+}
