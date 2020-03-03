@@ -4,7 +4,11 @@ class UsersController < ApplicationController
     end
 
     def add_user
-        User.create :name => params[:name]
-        render :json => {isOkay: true} 
+        if !User.find_by name: params[:name]
+            User.create :name => params[:name]
+            render :json => {isOkay: true} 
+        else
+            render :json => {isOkay: false}
+        end
     end
 end

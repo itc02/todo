@@ -5,10 +5,11 @@
 <select (change)="onSelect($event)">
     <option disabled>Select user</option>
     <option *ngFor="let user of users">{{ user.name }}</option>
+    <option *ngIf="newAddedUser">{{ newAddedUser }}</option>
 </select>
 <br>
 <button (click)="onSubmit()">Add</button>
 <h1>Add user</h1>
-<input type="text" (input)="onAddUser($event)">
+<input type="text" (input)="onAddUser($event)" [value]="isUsernameRight ? '' : newUser">
 <br>
 <button (click)="onSubmitUser()">Add</button>

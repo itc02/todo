@@ -11,7 +11,9 @@ export class AddComponent implements OnInit{
   description : string = '';
   assignTo : string = '';
   newUser : string = '';
+  newAddedUser : string = '';
   users : Object;
+  isUsernameRight : Boolean = false;
 
   constructor(private http: HttpClient) { }
 
@@ -47,7 +49,8 @@ export class AddComponent implements OnInit{
     this.http.post('http://localhost:3000/addUser', {
       name: this.newUser
     }).subscribe((data => {
-      console.log(data)
+      this.newAddedUser = this.newUser;
+      this.isUsernameRight = data['isOkay'];
     }))
   }
 }

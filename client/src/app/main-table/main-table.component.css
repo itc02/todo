@@ -2,8 +2,23 @@ table {
     border: 1px solid;
 }
 
-th, td{
+th, td {
     border: 1px solid;
     width: 100px;
     text-align: center;
+}
+
+.edit {
+    background-color: #5bc0de;
+    color: white;
+}
+
+.delete {
+    color: white;
+    background-color: #d9534f;
+}
+
+.line {
+    color: white;
+    background-color: #747c7c;
 }
