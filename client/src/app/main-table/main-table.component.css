@@ -1,10 +1,10 @@
 table {
     border: 1px solid;
+    width: 100%;
 }
 
 th, td {
     border: 1px solid;
-    width: 100px;
     text-align: center;
 }
 
@@ -21,4 +21,9 @@ th, td {
 .line {
     color: white;
     background-color: #747c7c;
+}
+
+.tableAndUsers {
+    display: flex;
+    justify-content: space-between;
 }

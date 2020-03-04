@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-    def index
+    def get_users
         render :json => User.all
     end
 
@@ -10,5 +10,10 @@ class UsersController < ApplicationController
         else
             render :json => {isOkay: false}
         end
+    end
+
+    def delete_user
+        User.find(params[:userId]).destroy
+        render :json => User.all
     end
 end

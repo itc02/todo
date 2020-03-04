@@ -19,4 +19,11 @@ export class UsersComponent implements OnInit {
     })
   }
 
+  deleteUser(e: any): void {
+    const id:number = parseInt(e.target.id.substring(4, e.target.id.length));
+    this.http.post('http://localhost:3000/deleteUser', {userId: id}).subscribe(allUsersWithoutDeleted => {
+      this.users = allUsersWithoutDeleted;
+    });
+  }
+
 }

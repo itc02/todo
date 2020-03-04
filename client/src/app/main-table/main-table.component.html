@@ -1,24 +1,28 @@
-<div>
-<h1>Todos</h1>
-<table>
-    <thead>
-        <th></th>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Assigned to</th>
-        <th colspan="3">Actions</th>
-    </thead>
-    <tbody *ngFor="let todo of todos">
-        <tr>
-            <td>{{ todo.id }}</td>
-            <td>{{ todo.date }}</td>
-            <td>{{ todo.description }}</td>
-            <td>{{ todo.assigned_to }}</td>
-            <td class='edit'>Edit</td>
-            <td class='delete'>Delete</td>
-            <td class='line'>Line through</td>
-        </tr>
-    </tbody>
-</table>
+<div class="tableAndUsers">
+    <div style="width: 50%">
+        <h1 style="text-align:center">Todos</h1>
+        <table>
+            <thead>
+                <th></th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Assigned to</th>
+                <th colspan="3">Actions</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let todo of todos; let i = index">
+                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ i + 1 }}</td>
+                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ todo.date }}</td>
+                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ todo.description }}</td>
+                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ todo.assigned_to }}</td>
+                    <td class='edit' (click)="edit($event)">Edit</td>
+                    <td class='delete' (click)="delete($event)" id="deleteId{{ todo.id }}">Delete</td>
+                    <td class='line' (click)="disable($event)" id="disableId{{ todo.id }}">{{ disabledRowId == todo.id ? disableText : 'Disable'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="width: 50%; margin-left: 15px">
+        <users></users>
+    </div>
 </div>
-<users></users>
