@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add',
@@ -11,11 +12,11 @@ export class AddComponent implements OnInit{
   description : string = '';
   assignTo : string = '';
   newUser : string = '';
-  newAddedUser : string = '';
   users : Object;
   isUsernameRight : Boolean = false;
+  descriptionText : string = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit(){
     this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
@@ -36,21 +37,21 @@ export class AddComponent implements OnInit{
   }
   
   onSubmit(): void {
+    console.log(5)
     this.http.post('http://localhost:3000/addTodo', {
       date: new Date().toLocaleDateString(),
       description: this.description,
       assignTo: this.assignTo
     }).subscribe(data => {
-      console.log(data)
-    })
+      this.router.navigate(['/main']);
+    });
   }
 
   onSubmitUser(): void {
     this.http.post('http://localhost:3000/addUser', {
       name: this.newUser
     }).subscribe((data => {
-      this.newAddedUser = this.newUser;
-      this.isUsernameRight = data['isOkay'];
+      this.router.navigate(['/main']);
     }))
   }
 }

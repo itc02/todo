@@ -10,19 +10,34 @@
                 <th colspan="3">Actions</th>
             </thead>
             <tbody>
-                <tr *ngFor="let todo of todos; let i = index">
-                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ i + 1 }}</td>
-                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ todo.date }}</td>
-                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ todo.description }}</td>
-                    <td [ngStyle]="disabledRowId == todo.id ? recordsBgColor : ''">{{ todo.assigned_to }}</td>
-                    <td class='edit' (click)="edit($event)">Edit</td>
+                <tr *ngFor="let todo of todos; let i = index" 
+                    [ngStyle]="disabledRowsId.indexOf(todo.id) > -1 ? disabledBgColor : transparentBgColor">
+                    <td>{{ i + 1 }}</td>
+                    <td><span *ngIf="enableEditingCondition(todo); else editDate">{{ todo.date }}</span></td>
+                    <td><span *ngIf="enableEditingCondition(todo); else editDescription">{{ todo.description }}</span></td>
+                    <td><span *ngIf="enableEditingCondition(todo); else editAssignTo">{{ todo.assigned_to }}</span></td>
+                    <td class='edit' (click)="edit($event)" id="{{ todo.id }}|{{ i }}" >Edit</td>
                     <td class='delete' (click)="delete($event)" id="deleteId{{ todo.id }}">Delete</td>
-                    <td class='line' (click)="disable($event)" id="disableId{{ todo.id }}">{{ disabledRowId == todo.id ? disableText : 'Disable'}}</td>
+                    <td class='disable' (click)="disable($event)" id="disableId{{ todo.id }}">{{ disabledRowsId.indexOf(todo.id) > -1 ? 'Enable' : 'Disable'}}</td>
                 </tr>
             </tbody>
         </table>
+        <button *ngIf="isEditButtonClicked" (click)="editData()">Edit</button>
+        <button *ngIf="isEditButtonClicked" (click)="cancel()">Cancel</button>
     </div>
     <div style="width: 50%; margin-left: 15px">
         <users></users>
     </div>
 </div>
+
+<ng-template #editDate>
+    <input type="text" value="{{ todos[editIndexId].date }}">
+</ng-template>
+
+<ng-template #editDescription>
+    <input type="text" value="{{ todos[editIndexId].description }}">
+</ng-template>
+
+<ng-template #editAssignTo>
+    <input type="text" value="{{ todos[editIndexId].assigned_to }}">
+</ng-template>

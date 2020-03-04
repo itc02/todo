@@ -7,14 +7,15 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./main-table.component.css']
 })
 
-
 export class MainTableComponent implements OnInit {
   todos: Object;
-  isDisabled: Boolean = false;
-  recordsBgColor: Object = {backgroundColor: 'transparent'};
-  disableText: string = 'Disable';
-  disabledRowId: number;
-  
+  disabledBgColor: Object = { backgroundColor: '#747c7c', color: 'white' };
+  transparentBgColor: Object = { backgroundColor: 'transparent', color: 'black' };
+  isEditButtonClicked: Boolean = false;
+  disabledRowsId: number[] = [];
+  editTodoId: number = 0;
+  editIndexId: number = 0;
+
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
@@ -23,8 +24,24 @@ export class MainTableComponent implements OnInit {
     });
   }
 
+  enableEditingCondition(todo: any): Boolean {
+    return this.isEditButtonClicked && this.editTodoId != todo.id || !this.isEditButtonClicked
+  }
+
   edit(e: any) : void {
-    console.log(7)
+    const id = e.target.id;
+    const pipeId = id.indexOf('|');
+    this.editTodoId = parseInt(id.substring(0, pipeId + 1));
+    this.editIndexId = parseInt(id.substring(pipeId + 1, id.length));
+    this.isEditButtonClicked = true;
+  }
+
+  editData() : void {
+    this.isEditButtonClicked = false;  
+  }
+
+  cancel() : void {
+    this.isEditButtonClicked = false; 
   }
 
   delete(e: any) : void {
@@ -35,10 +52,13 @@ export class MainTableComponent implements OnInit {
   }
 
   disable(e: any) : void {
-    this.isDisabled = !this.isDisabled;
-    this.disableText = this.isDisabled ? 'Enable' : 'Disable';
-    this.recordsBgColor = {'backgroundColor' : this.isDisabled ? '#747c7c' : 'transparent'};
-    this.disabledRowId = parseInt(e.target.id.substring(9, e.target.id.length));
+    const id = parseInt(e.target.id.substring(9, e.target.id.length));
+    const index = this.disabledRowsId.indexOf(id);
+    if (index == -1) {
+      this.disabledRowsId.push(id);
+    } else {
+      this.disabledRowsId.splice(index, 1);
+    }
   }
 
 }

@@ -1,15 +1,14 @@
 <h1>Add Todo</h1>
 <p>Description</p>
-<textarea (input)="onInput($event)"></textarea>
+<textarea (input)="onInput($event)">{{ descriptionText }}</textarea>
 <p>Assign to:</p>
 <select (change)="onSelect($event)">
     <option disabled>Select user</option>
     <option *ngFor="let user of users">{{ user.name }}</option>
-    <option *ngIf="newAddedUser">{{ newAddedUser }}</option>
 </select>
 <br>
 <button (click)="onSubmit()">Add</button>
 <h1>Add user</h1>
-<input type="text" (input)="onAddUser($event)" [value]="isUsernameRight ? '' : newUser">
+<input type="text" (input)="onAddUser($event)">
 <br>
 <button (click)="onSubmitUser()">Add</button>

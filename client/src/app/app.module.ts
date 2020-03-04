@@ -9,6 +9,7 @@ import { UsersComponent } from './users/users.component';
 import { AddComponent } from './add/add.component';
 
 const appRoutes: Routes = [
+    { path: '', redirectTo: '/main', pathMatch: 'full'},
     { path: 'main', component: MainTableComponent},
     { path: 'add', component: AddComponent }
 ];
