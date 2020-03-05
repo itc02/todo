@@ -11,14 +11,14 @@
             </thead>
             <tbody>
                 <tr *ngFor="let todo of todos; let i = index" 
-                    [ngStyle]="disabledRowsId.indexOf(todo.id) > -1 ? disabledBgColor : transparentBgColor">
+                    [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
                     <td>{{ i + 1 }}</td>
                     <td><span *ngIf="enableEditingCondition(todo); else editDate">{{ todo.date }}</span></td>
                     <td><span *ngIf="enableEditingCondition(todo); else editDescription">{{ todo.description }}</span></td>
                     <td><span *ngIf="enableEditingCondition(todo); else editAssignTo">{{ todo.assigned_to }}</span></td>
                     <td class='edit' (click)="edit($event)" id="{{ todo.id }}|{{ i }}" >Edit</td>
                     <td class='delete' (click)="delete($event)" id="deleteId{{ todo.id }}">Delete</td>
-                    <td class='disable' (click)="disable($event)" id="disableId{{ todo.id }}">{{ disabledRowsId.indexOf(todo.id) > -1 ? 'Enable' : 'Disable'}}</td>
+                    <td class='disable' (click)="disable($event)" id="disableId{{ todo.id }}">{{ todo.is_disabled ? 'Enable' : 'Disable' }}</td>
                 </tr>
             </tbody>
         </table>
@@ -31,13 +31,15 @@
 </div>
 
 <ng-template #editDate>
-    <input type="text" value="{{ todos[editIndexId].date }}">
+    <input #newDate type="text" value="{{ todos[editIndexId].date }}" (input)="createNewDate(newDate.value)">
 </ng-template>
 
 <ng-template #editDescription>
-    <input type="text" value="{{ todos[editIndexId].description }}">
+    <input #newDescription type="text" value="{{ todos[editIndexId].description }}" (input)="createNewDescription(newDescription.value)">
 </ng-template>
 
 <ng-template #editAssignTo>
-    <input type="text" value="{{ todos[editIndexId].assigned_to }}">
+    <select #newAssignation type="text" value="{{ todos[editIndexId].assigned_to }}" (change)="createNewAssignation(newAssignation.value)">
+        <option *ngFor="let user of users">{{ user.name }}</option>
+    </select>
 </ng-template>

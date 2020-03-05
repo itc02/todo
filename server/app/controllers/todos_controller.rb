@@ -1,15 +1,25 @@
 class TodosController < ApplicationController
-    def get_todos
+    def get
         render :json => TodoList.all
     end
     
-    def add_todo
+    def add
         TodoList.create :date => params[:date], :description => params[:description], :assigned_to => params[:assignTo]
-        render :json => { :isOkay => true}
+        render :json => 'no content'
     end
 
-    def delete_todo
+    def delete
         TodoList.find(params[:todoId]).destroy
+        render :json => TodoList.all
+    end
+
+    def update
+        TodoList.update(params[:id], :date => params[:date], :description => params[:description], :assigned_to => params[:assigned_to])
+        render :json => TodoList.all
+    end
+
+    def disable
+        TodoList.update(params[:id], :is_disabled => params[:is_disabled])
         render :json => TodoList.all
     end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_02_222255) do
+ActiveRecord::Schema.define(version: 2020_03_05_193153) do
 
   create_table "todo_lists", force: :cascade do |t|
     t.string "date"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2020_03_02_222255) do
     t.string "assigned_to"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_disabled"
   end
 
   create_table "users", force: :cascade do |t|

@@ -4,7 +4,7 @@ class CreateTodoLists < ActiveRecord::Migration[6.0]
       t.string :date
       t.string :description
       t.string :assigned_to
-
+      
       t.timestamps
     end
   end

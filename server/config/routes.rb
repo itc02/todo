@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
-  get 'getTodos', to: 'todos#get_todos'
-  post 'addTodo', to: 'todos#add_todo'
-  get 'getUsers', to: 'users#get_users'
-  post 'addUser', to: 'users#add_user'
-  post 'deleteTodo', to: 'todos#delete_todo'
-  post 'deleteUser', to: 'users#delete_user'
+  get 'getTodos', to: 'todos#get'
+  post 'addTodo', to: 'todos#add'
+  get 'getUsers', to: 'users#get'
+  post 'addUser', to: 'users#add'
+  post 'deleteTodo', to: 'todos#delete'
+  post 'deleteUser', to: 'users#delete'
+  post 'updateTodo', to: 'todos#update'
+  post 'disableTodo', to: 'todos#disable'
 end

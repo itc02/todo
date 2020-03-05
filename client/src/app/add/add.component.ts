@@ -37,7 +37,6 @@ export class AddComponent implements OnInit{
   }
   
   onSubmit(): void {
-    console.log(5)
     this.http.post('http://localhost:3000/addTodo', {
       date: new Date().toLocaleDateString(),
       description: this.description,
