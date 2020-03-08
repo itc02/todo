@@ -1,45 +1,76 @@
 <div class="tableAndUsers">
-    <div style="width: 50%">
+    <div style="width: 100%">
         <h1 style="text-align:center">Todos</h1>
-        <table>
-            <thead>
-                <th></th>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Assigned to</th>
-                <th colspan="3">Actions</th>
-            </thead>
-            <tbody>
-                <tr *ngFor="let todo of todos; let i = index" 
-                    [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
-                    <td>{{ i + 1 }}</td>
-                    <td><span *ngIf="enableEditingCondition(todo); else editDate">{{ todo.date }}</span></td>
-                    <td><span *ngIf="enableEditingCondition(todo); else editDescription">{{ todo.description }}</span></td>
-                    <td><span *ngIf="enableEditingCondition(todo); else editAssignTo">{{ todo.assigned_to }}</span></td>
-                    <td class='edit' (click)="edit($event)" id="{{ todo.id }}|{{ i }}" >Edit</td>
-                    <td class='delete' (click)="delete($event)" id="deleteId{{ todo.id }}">Delete</td>
-                    <td class='disable' (click)="disable($event)" id="disableId{{ todo.id }}">{{ todo.is_disabled ? 'Enable' : 'Disable' }}</td>
-                </tr>
-            </tbody>
+        <table mat-table [dataSource]="todos" class="mat-elevation-z8">
+            <tr mat-header-row *matHeaderRowDef="['id', 'date', 'description', 'assigned_to', 'actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['id', 'date', 'description', 'assigned_to', 'edit', 'delete', 'disable'];"></tr>
+            
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor"> {{ todo.position + 1 }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef> Date </th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor"> <span *ngIf="isEditButtonClicked && editTodoId != todo.id || !isEditButtonClicked; else editDate">{{ todo.date }}</span> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> Description </th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor"> <span *ngIf="isEditButtonClicked && editTodoId != todo.id || !isEditButtonClicked; else editDescription">{{ todo.description }}</span> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="assigned_to">
+                <th mat-header-cell *matHeaderCellDef> Assigned to </th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor"> <span *ngIf="isEditButtonClicked && editTodoId != todo.id || !isEditButtonClicked; else editAssignTo">{{ todo.assigned_to }}</span> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef [attr.colspan]="3"> Actions </th>
+                <td mat-cell *matCellDef>Actions</td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor"><button  (click)="edit(todo.id, todo.position, todo.is_disabled)" mat-raised-button style="background-color: #117a8b; color: white">Edit</button></td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor"><button  (click)="delete(todo.id)" mat-raised-button color="warn">Delete</button></td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor" ><button mat-raised-button style="background-color: #545b62; color: white" (click)="disable(todo.id)">{{ todo.is_disabled ? 'Enable' : 'Disable' }}</button></td>
+            </ng-container>
         </table>
-        <button *ngIf="isEditButtonClicked" (click)="editData()">Edit</button>
-        <button *ngIf="isEditButtonClicked" (click)="cancel()">Cancel</button>
+        <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
+
+        <button mat-stroked-button color="primary" class="buttonsAfterEdit" *ngIf="isEditButtonClicked" (click)="editData()">Edit</button>
+        <button mat-stroked-button color="primary" class="buttonsAfterEdit" *ngIf="isEditButtonClicked" (click)="cancel()">Cancel</button>
     </div>
     <div style="width: 50%; margin-left: 15px">
-        <users></users>
+        <users (event)="updateUsers()"></users>
     </div>
 </div>
 
 <ng-template #editDate>
-    <input #newDate type="text" value="{{ todos[editIndexId].date }}" (input)="createNewDate(newDate.value)">
+    <mat-form-field>
+        <input #newDate type="text" matInput value="{{ unpaginatedTodos[editIndexId].date }}" (input)="createNewDate(newDate.value)">
+    </mat-form-field>
 </ng-template>
 
 <ng-template #editDescription>
-    <input #newDescription type="text" value="{{ todos[editIndexId].description }}" (input)="createNewDescription(newDescription.value)">
+    <mat-form-field>
+        <input #newDescription type="text" matInput value="{{ unpaginatedTodos[editIndexId].description }}" (input)="createNewDescription(newDescription.value)">
+    </mat-form-field>
 </ng-template>
 
 <ng-template #editAssignTo>
-    <select #newAssignation type="text" value="{{ todos[editIndexId].assigned_to }}" (change)="createNewAssignation(newAssignation.value)">
-        <option *ngFor="let user of users">{{ user.name }}</option>
-    </select>
+    <mat-form-field>
+        <mat-select #newAssignation type="text" matInput value="{{ unpaginatedTodos[editIndexId].assigned_to }}" (selectionChange)="createNewAssignation(newAssignation.value)">
+            <mat-option *ngFor="let user of users" [value]="user.name">{{ user.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
 </ng-template>

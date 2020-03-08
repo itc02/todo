@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   post 'deleteUser', to: 'users#delete'
   post 'updateTodo', to: 'todos#update'
   post 'disableTodo', to: 'todos#disable'
+  post 'updateTodos', to: 'todos#update_todos'
 end

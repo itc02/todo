@@ -1,14 +1,24 @@
-<h1>Add Todo</h1>
-<p>Description</p>
-<textarea (input)="onInput($event)">{{ descriptionText }}</textarea>
-<p>Assign to:</p>
-<select (change)="onSelect($event)">
-    <option disabled>Select user</option>
-    <option *ngFor="let user of users">{{ user.name }}</option>
-</select>
-<br>
-<button (click)="onSubmit()">Add</button>
-<h1>Add user</h1>
-<input type="text" (input)="onAddUser($event)">
-<br>
-<button (click)="onSubmitUser()">Add</button>
+<div>
+    <mat-form-field appearance="outline" hintLabel="Max 15 characters">
+        <mat-label>Username</mat-label>
+        <input #user matInput maxlength="15" (input)="onAddUser(user.value)">
+        <mat-hint align="end">{{user.value?.length || 0}}/15</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" hintLabel="Max 20 characters">
+        <mat-label>Todo description</mat-label>
+        <input #desc matInput maxlength="20" (input)="onInput(desc.value)">
+        <mat-hint align="end">{{desc.value?.length || 0}}/20</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Assign to:</mat-label>
+            <mat-select #assign (selectionChange)="onSelect(assign.value)" disabled="{{ description ? false : true}}">
+            <mat-option *ngFor="let user of users" value="{{ description? user.name : '' }}">{{ description? user.name : ''}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <br>
+    
+    <br>
+    <button mat-raised-button (click)="onSubmit()">Add</button>
+</div>

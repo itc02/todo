@@ -1,11 +1,13 @@
 table {
-    border: 1px solid;
     width: 100%;
 }
 
-th, td {
-    border: 1px solid;
-    text-align: center;
+th {
+    text-align: center !important;
+}
+td {
+    text-align: center !important;
+    padding: 0 !important;
 }
 .edit, .delete, .disable {
     color: white;
@@ -28,13 +30,18 @@ th, td {
     justify-content: space-between;
 }
 
-input {
+input, mat-select {
     text-align: center;
-    font-family: "Times-New Roman";
     font-size: 16px;
     font-weight: bold;
 }
 
 button {
-    margin-top: 10px;
+    width: 80px;
+}
+mat-form-field-infix{
+    border: 0 !important;
+}
+.buttonsAfterEdit {
+    margin: 10px 10px 10px 0;
 }

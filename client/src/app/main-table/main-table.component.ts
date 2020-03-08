@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'main-table',
@@ -8,9 +10,11 @@ import { HttpClient } from '@angular/common/http';
 })
 
 export class MainTableComponent implements OnInit {
-  todos: Object;
-  users: Object;
-  disabledBgColor: Object = { backgroundColor: '#747c7c', color: 'white' };
+  todos: any;
+  unpaginatedTodos: any;
+  positions: any;
+  users: any;
+  disabledBgColor: Object = { backgroundColor: '#fafafa', color: 'rgba(0,0,0,.26)'};
   transparentBgColor: Object = { backgroundColor: 'transparent', color: 'black' };
   isEditButtonClicked: Boolean = false;
   disabledRowsId: number[] = [];
@@ -21,10 +25,12 @@ export class MainTableComponent implements OnInit {
   newAssignation: string = '';
 
   constructor(private http: HttpClient) { }
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   ngOnInit(): void {
     this.http.get('http://localhost:3000/getTodos').subscribe(allTodos => {
-      this.todos = allTodos
+      this.createPagination(allTodos);
+      this.fillDisabledRowsIdArray(allTodos);
     });
     this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
       this.users = allUsers;
@@ -32,30 +38,29 @@ export class MainTableComponent implements OnInit {
   }
 
   enableEditingCondition(todo: any): Boolean {
-    return this.isEditButtonClicked && this.editTodoId != todo.id || !this.isEditButtonClicked
+    return this.isEditButtonClicked && this.editTodoId != todo.id || !this.isEditButtonClicked;
   }
 
-  edit(e: any) : void {
-    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
-      this.users = allUsers;
-      const id = e.target.id;
-      const pipeId = id.indexOf('|');
-      this.editTodoId = parseInt(id.substring(0, pipeId + 1));
-      this.editIndexId = parseInt(id.substring(pipeId + 1, id.length));
-      this.isEditButtonClicked = true;
-    })
-    
+  edit(id: number, index: number, is_disabled: Boolean) : void {
+    if(!is_disabled) {
+      this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+        this.users = allUsers;
+        this.editTodoId = id;
+        this.editIndexId = index;
+        this.isEditButtonClicked = true;
+      });
+    }
   }
 
   editData() : void {
-    const todo = this.todos[this.editIndexId]
+    const todo = this.unpaginatedTodos[this.editIndexId];
     this.http.post('http://localhost:3000/updateTodo', {
       id: todo.id,
       date: this.newDate ? this.newDate : todo.date,
       description: this.newDescription ? this.newDescription : todo.description,
       assigned_to: this.newAssignation ? this.newAssignation : todo.assigned_to
     }).subscribe(allTodos => {
-      this.todos = allTodos;
+      this.createPagination(allTodos);
       this.isEditButtonClicked = false; 
     });
   }
@@ -64,15 +69,13 @@ export class MainTableComponent implements OnInit {
     this.isEditButtonClicked = false; 
   }
 
-  delete(e: any) : void {
-    const id: number = parseInt(e.target.id.substring(8, e.target.id.length));
+  delete(id: number) : void {
     this.http.post('http://localhost:3000/deleteTodo', {todoId: id}).subscribe(allTodosWithoutDeleted => {
-      this.todos = allTodosWithoutDeleted;
+      this.createPagination(allTodosWithoutDeleted);
     });
   }
 
-  disable(e: any) : void {
-    const id = parseInt(e.target.id.substring(9, e.target.id.length));
+  disable(id: number) : void {
     const index = this.disabledRowsId.indexOf(id);
      if (index == -1) {
       this.disabledRowsId.push(id);
@@ -83,7 +86,7 @@ export class MainTableComponent implements OnInit {
       id: id,
       is_disabled: this.disabledRowsId.indexOf(id) >= 0
     }).subscribe(allTodos => {
-      this.todos = allTodos;
+      this.createPagination(allTodos);
     })
    
   }
@@ -98,5 +101,35 @@ export class MainTableComponent implements OnInit {
 
   createNewAssignation(newAssignation: string) : void {
     this.newAssignation = newAssignation;
+  }
+
+  createPagination(data: any) {
+    for(let i:number = 0; i < data.length; i++){
+      data[i].position = i;
+    }
+    this.unpaginatedTodos = data;
+    this.todos = new MatTableDataSource(data);
+    this.todos.paginator = this.paginator;
+  }
+
+  updateUsers() {
+    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+      this.users = allUsers;
+      const usersName = this.users.map(item => {
+        return item.name;
+      });
+      
+      this.http.post('http://localhost:3000/updateTodos', {users: usersName}).subscribe(allTodos => {
+        this.createPagination(allTodos);
+      });
+    });
+  }
+
+  fillDisabledRowsIdArray(data: any) {
+    this.disabledRowsId = data.map(item => {
+      if(item.is_disabled) {
+        return item.id
+      } 
+    });
   }
 }

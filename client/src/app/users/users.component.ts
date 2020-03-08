@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'users',
@@ -8,21 +10,32 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UsersComponent implements OnInit {
 
-  users: Object;
+  users: any;
+  unpaginatedUsers: any;
 
   constructor(private http: HttpClient) { }
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @Output() event = new EventEmitter<Boolean>();
 
   ngOnInit(): void {
     this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
-      this.users = allUsers;
+      this.createPagination(allUsers)
     })
   }
 
-  deleteUser(e: any): void {
-    const id:number = parseInt(e.target.id.substring(4, e.target.id.length));
+  delete(id: number): void {
     this.http.post('http://localhost:3000/deleteUser', {userId: id}).subscribe(allUsersWithoutDeleted => {
-      this.users = allUsersWithoutDeleted;
+      this.createPagination(allUsersWithoutDeleted);
+      this.event.emit(true);
     });
   }
 
+  createPagination(data: any) {
+    for(let i:number = 0; i < data.length; i++){
+      data[i].position = i;
+    }
+    this.unpaginatedUsers = data;
+    this.users = new MatTableDataSource(data);
+    this.users.paginator = this.paginator;
+  }
 }
