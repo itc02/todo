@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { angularComponent } from '../config/constants';
 
 @Component({
-  selector: 'root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: angularComponent.selector.app,
+  templateUrl: angularComponent.templateUrl.app,
+  styleUrls: angularComponent.styleUrls.app
 })
+
 export class AppComponent {
 }

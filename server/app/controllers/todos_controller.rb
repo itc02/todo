@@ -2,7 +2,7 @@ class TodosController < ApplicationController
     def get
         render :json => TodoList.all
     end
-    
+
     def add
         TodoList.create :date => params[:date], :description => params[:description], :assigned_to => params[:assignTo]
         render :json => {isOkay: true}
@@ -14,7 +14,6 @@ class TodosController < ApplicationController
     end
 
     def update
-        puts params[:assigned_to]
         TodoList.update(params[:id], :date => params[:date], :description => params[:description], :assigned_to => params[:assigned_to])
         render :json => TodoList.all
     end
@@ -25,13 +24,7 @@ class TodosController < ApplicationController
     end
 
     def update_todos
-        availableUsers = params[:users]
-        puts 'aaaaaaaaaaaaaaaaaaaa',availableUsers
-        TodoList.all.each do |todo|
-            if(!availableUsers.include?(todo.assigned_to))
-                TodoList.update(todo.id, :assigned_to => 'Deleted') 
-            end
-        end
+        TodoList.where(:assigned_to => params[:deletedUserName]).update_all(:assigned_to => 'Deleted')
         render :json => TodoList.all
     end
 end

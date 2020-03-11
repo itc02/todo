@@ -11,12 +11,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppComponent } from './app.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { UsersComponent } from './users/users.component';
 import { AddComponent } from './add/add.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -29,7 +31,8 @@ const appRoutes: Routes = [
         AppComponent,
         MainTableComponent,
         UsersComponent,
-        AddComponent
+        AddComponent,
+        DialogDeleteComponent
     ],
     imports: [
         RouterModule.forRoot(
@@ -44,6 +47,7 @@ const appRoutes: Routes = [
         MatFormFieldModule,
         MatSnackBarModule,
         MatPaginatorModule,
+        MatDialogModule,
         BrowserModule,
         HttpClientModule,
         BrowserAnimationsModule
@@ -52,5 +56,4 @@ const appRoutes: Routes = [
     bootstrap: [AppComponent]
 })
 export class AppModule {
-    
 }

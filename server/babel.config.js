@@ -35,7 +35,7 @@ module.exports = function(api) {
           exclude: ['transform-typeof-symbol']
         }
       ]
-    ].filter(Boolean),
+    ].filter(boolean),
     plugins: [
       'babel-plugin-macros',
       '@babel/plugin-syntax-dynamic-import',
@@ -67,6 +67,6 @@ module.exports = function(api) {
           async: false
         }
       ]
-    ].filter(Boolean)
+    ].filter(boolean)
   }
 }

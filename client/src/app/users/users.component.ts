@@ -2,36 +2,38 @@ import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/cor
 import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-
+import { routes, angularComponent } from '../../config/constants';
 @Component({
-  selector: 'users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+  selector: angularComponent.selector.users,
+  templateUrl: angularComponent.templateUrl.users,
+  styleUrls: angularComponent.styleUrls.users
 })
+
 export class UsersComponent implements OnInit {
 
   users: any;
   unpaginatedUsers: any;
 
   constructor(private http: HttpClient) { }
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @Output() event = new EventEmitter<Boolean>();
+  @Output() event = new EventEmitter<any>();
 
   ngOnInit(): void {
-    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
-      this.createPagination(allUsers)
-    })
+    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
+      this.createPagination(allUsers);
+    });
   }
 
   delete(id: number): void {
-    this.http.post('http://localhost:3000/deleteUser', {userId: id}).subscribe(allUsersWithoutDeleted => {
-      this.createPagination(allUsersWithoutDeleted);
-      this.event.emit(true);
+    this.http.post(`${routes.serverURL}/${routes.deleteUser}`, { userId: id }).subscribe((data: any) => {
+      this.createPagination(data.allUsersWithoutDeleted);
+      this.event.emit({ deletedUserName: data.deletedUserName });
     });
   }
 
   createPagination(data: any) {
-    for(let i:number = 0; i < data.length; i++){
+    for (let i = 0; i < data.length; i++) {
       data[i].position = i;
     }
     this.unpaginatedUsers = data;

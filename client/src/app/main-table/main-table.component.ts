@@ -2,11 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-
+import { routes, angularComponent } from '../../config/constants';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+// import {}
 @Component({
-  selector: 'main-table',
-  templateUrl: './main-table.component.html',
-  styleUrls: ['./main-table.component.css']
+  selector: angularComponent.selector.mainTable,
+  templateUrl: angularComponent.templateUrl.mainTable,
+  styleUrls: angularComponent.styleUrls.mainTable
 })
 
 export class MainTableComponent implements OnInit {
@@ -14,36 +16,46 @@ export class MainTableComponent implements OnInit {
   unpaginatedTodos: any;
   positions: any;
   users: any;
-  disabledBgColor: Object = { backgroundColor: '#fafafa', color: 'rgba(0,0,0,.26)'};
-  transparentBgColor: Object = { backgroundColor: 'transparent', color: 'black' };
-  isEditButtonClicked: Boolean = false;
+  disabledBgColor: object = { backgroundColor: '#fafafa', color: 'rgba(0,0,0,.26)'};
+  transparentBgColor: object = { backgroundColor: 'transparent', color: 'black' };
+  isEditButtonClicked = false;
   disabledRowsId: number[] = [];
-  editTodoId: number = 0;
-  editIndexId: number = 0;
-  newDate: string = '';
-  newDescription: string = '';
-  newAssignation: string = '';
+  editTodoId = 0;
+  editIndexId = 0;
+  newDate = '';
+  newDescription = '';
+  newAssignation = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private dialog: MatDialog) { }
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   ngOnInit(): void {
-    this.http.get('http://localhost:3000/getTodos').subscribe(allTodos => {
+    this.http.get(`${routes.serverURL}/${routes.getTodos}`).subscribe(allTodos => {
       this.createPagination(allTodos);
       this.fillDisabledRowsIdArray(allTodos);
     });
-    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
       this.users = allUsers;
     });
+
+    // const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    //   width: '250px',
+    //   data: {name: this.name, animal: this.animal}
+    // });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    //   this.animal = result;
+    // });
   }
 
-  enableEditingCondition(todo: any): Boolean {
-    return this.isEditButtonClicked && this.editTodoId != todo.id || !this.isEditButtonClicked;
+  enableEditingCondition(todo: any): boolean {
+    return this.isEditButtonClicked && this.editTodoId !== todo.id || !this.isEditButtonClicked;
   }
 
-  edit(id: number, index: number, is_disabled: Boolean) : void {
-    if(!is_disabled) {
-      this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+  edit(id: number, index: number, isDisabled: boolean): void {
+    if (!isDisabled) {
+      this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
         this.users = allUsers;
         this.editTodoId = id;
         this.editIndexId = index;
@@ -52,59 +64,58 @@ export class MainTableComponent implements OnInit {
     }
   }
 
-  editData() : void {
+  editData(): void {
     const todo = this.unpaginatedTodos[this.editIndexId];
-    this.http.post('http://localhost:3000/updateTodo', {
+    this.http.post(`${routes.serverURL}/${routes.updateTodo}`, {
       id: todo.id,
       date: this.newDate ? this.newDate : todo.date,
       description: this.newDescription ? this.newDescription : todo.description,
       assigned_to: this.newAssignation ? this.newAssignation : todo.assigned_to
     }).subscribe(allTodos => {
       this.createPagination(allTodos);
-      this.isEditButtonClicked = false; 
+      this.isEditButtonClicked = false;
     });
   }
 
-  cancel() : void {
-    this.isEditButtonClicked = false; 
+  cancel(): void {
+    this.isEditButtonClicked = false;
   }
 
-  delete(id: number) : void {
-    this.http.post('http://localhost:3000/deleteTodo', {todoId: id}).subscribe(allTodosWithoutDeleted => {
+  delete(id: number): void {
+    this.http.post(`${routes.serverURL}/${routes.deleteTodo}`, {todoId: id}).subscribe(allTodosWithoutDeleted => {
       this.createPagination(allTodosWithoutDeleted);
     });
   }
 
-  disable(id: number) : void {
+  disable(id: number): void {
     const index = this.disabledRowsId.indexOf(id);
-     if (index == -1) {
+    if (index === -1) {
       this.disabledRowsId.push(id);
     } else {
       this.disabledRowsId.splice(index, 1);
     }
-    this.http.post('http://localhost:3000/disableTodo', {
-      id: id,
+    this.http.post(`${routes.serverURL}/${routes.disableTodo}`, {
+      id,
       is_disabled: this.disabledRowsId.indexOf(id) >= 0
     }).subscribe(allTodos => {
       this.createPagination(allTodos);
-    })
-   
+    });
   }
 
-  createNewDate(newDate: string) : void {
+  createNewDate(newDate: string): void {
     this.newDate = newDate;
   }
 
-  createNewDescription(newDescription: string) : void {
+  createNewDescription(newDescription: string): void {
     this.newDescription = newDescription;
   }
 
-  createNewAssignation(newAssignation: string) : void {
+  createNewAssignation(newAssignation: string): void {
     this.newAssignation = newAssignation;
   }
 
   createPagination(data: any) {
-    for(let i:number = 0; i < data.length; i++){
+    for (let i = 0; i < data.length; i++) {
       data[i].position = i;
     }
     this.unpaginatedTodos = data;
@@ -112,14 +123,10 @@ export class MainTableComponent implements OnInit {
     this.todos.paginator = this.paginator;
   }
 
-  updateUsers() {
-    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+  updateUsers($event) {
+    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
       this.users = allUsers;
-      const usersName = this.users.map(item => {
-        return item.name;
-      });
-      
-      this.http.post('http://localhost:3000/updateTodos', {users: usersName}).subscribe(allTodos => {
+      this.http.post(`${routes.serverURL}/${routes.updateTodos}`, { deletedUserName: $event.deletedUserName }).subscribe(allTodos => {
         this.createPagination(allTodos);
       });
     });
@@ -127,9 +134,9 @@ export class MainTableComponent implements OnInit {
 
   fillDisabledRowsIdArray(data: any) {
     this.disabledRowsId = data.map(item => {
-      if(item.is_disabled) {
-        return item.id
-      } 
+      if (item.is_disabled) {
+        return item.id;
+      }
     });
   }
 }

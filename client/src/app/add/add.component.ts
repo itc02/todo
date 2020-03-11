@@ -1,78 +1,75 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { routes, snack, angularComponent } from '../../config/constants';
 
 @Component({
-  selector: 'app-add',
-  templateUrl: './add.component.html',
-  styleUrls: ['./add.component.css']
+  selector: angularComponent.selector.add,
+  templateUrl: angularComponent.templateUrl.add,
+  styleUrls: angularComponent.styleUrls.add
 })
 
 export class AddComponent implements OnInit{
-  description : string = '';
-  assignTo : string = '';
-  newUser : string = '';
-  users : any;
+  description = '';
+  assignTo = '';
+  newUser = '';
+  users: any;
   usersName: any = [];
-  isValidData: Boolean = true;
-  isButtonClicked: Boolean = false;
+  isValidData = true;
+  isButtonClicked = false;
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.createUsers();
   }
-  
+
   onSubmit(): void {
     this.isButtonClicked = true;
-    if(this.description && this.assignTo && this.newUser){
+    if (this.description && this.assignTo && this.newUser) {
       this.addTodo();
-      if(!this.addUser()) {
-        this.openSnackBar('Todo was added successfuly, but user already exists', 3000);
+      if (this.isUserExists()) {
+        this.openSnackBar(snack.error.todoAndUser, snack.duration);
       } else {
-        this.openSnackBar('Todo and user were added successfully', 3000);
+        this.addUser();
+        this.openSnackBar(snack.success.todoAndUser, snack.duration);
       }
-    } else if(this.description && this.assignTo) {
+    } else if (this.description && this.assignTo) {
       this.addTodo();
-      this.openSnackBar('Todo was added successfully', 3000);
-    } else if(this.newUser) {
-      if(this.addUser()) {
-        this.openSnackBar('User was added successfully', 3000);
+      this.openSnackBar(snack.success.todo, snack.duration);
+    } else if (this.newUser) {
+      if (this.isUserExists()) {
+        this.openSnackBar(snack.error.user, snack.duration);
       } else {
-        this.openSnackBar('User already exists', 3000);
+        this.addUser();
+        this.openSnackBar(snack.success.user, snack.duration);
       }
     } else {
       this.isValidData = false;
-      this.openSnackBar('Some data is filled wrong', 3000);
+      this.openSnackBar(snack.error.todo, snack.duration);
     }
   }
 
   addTodo() {
-    this.http.post('http://localhost:3000/addTodo', {
+    this.http.post(`${routes.serverURL}/${routes.addTodo}`, {
       date: new Date().toLocaleDateString(),
       description: this.description,
       assignTo: this.assignTo
-    }).subscribe(data => { });
+    }).subscribe();
   }
 
-  addUser(): Boolean {
-    let isOkay: Boolean = true;
-    if(this.usersName.indexOf(this.newUser) >= 0) {
-      isOkay = false;
-    } else {
-      this.http.post('http://localhost:3000/addUser', {
-        name: this.newUser
-      }).subscribe((data => {
-          this.createUsers();
-        }))
-    }
-    return isOkay;
+  addUser(): void {
+    this.http.post(`${routes.serverURL}/${routes.addUser}`, { name: this.newUser }).subscribe((data => {
+      this.createUsers();
+    }));
   }
 
-  openSnackBar(message: string, duration: number){
-    this.snackBar.open(message, 'Close', {
-      duration: duration
-    });
+  isUserExists(): boolean {
+    return this.usersName.indexOf(this.newUser) >= 0;
+  }
+
+  openSnackBar(message: string, duration: number) {
+    this.snackBar.open(message, snack.close, { duration });
   }
 
   onInput(description: string): void {
@@ -86,17 +83,17 @@ export class AddComponent implements OnInit{
   onAddUser(user: string): void {
     this.newUser = user;
   }
-  
+
   createUsers() {
-    this.http.get('http://localhost:3000/getUsers').subscribe(allUsers => {
+    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
       this.users = allUsers;
       this.createUsersName();
     });
   }
 
   createUsersName() {
-    for(let i = 0; i < this.users.length; i++) {
-      this.usersName.push(this.users[i].name);
+    for (const user of this.users) {
+      this.usersName.push(user.name);
     }
   }
 }

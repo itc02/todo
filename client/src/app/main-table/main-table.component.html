@@ -51,7 +51,7 @@
         <button mat-stroked-button color="primary" class="buttonsAfterEdit" *ngIf="isEditButtonClicked" (click)="cancel()">Cancel</button>
     </div>
     <div style="width: 50%; margin-left: 15px">
-        <users (event)="updateUsers()"></users>
+        <app-users (event)="updateUsers($event)"></app-users>
     </div>
 </div>
 
