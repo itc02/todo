@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { routes, angularComponent } from '../../config/constants';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-// import {}
+import { routes, angularComponent, deleteDialog } from '../../config/constants';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogDeleteComponent } from '../dialog-delete/dialog-delete.component';
+
 @Component({
   selector: angularComponent.selector.mainTable,
   templateUrl: angularComponent.templateUrl.mainTable,
@@ -25,6 +26,7 @@ export class MainTableComponent implements OnInit {
   newDate = '';
   newDescription = '';
   newAssignation = '';
+  isDelete = true;
 
   constructor(private http: HttpClient, private dialog: MatDialog) { }
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -37,16 +39,6 @@ export class MainTableComponent implements OnInit {
     this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
       this.users = allUsers;
     });
-
-    // const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-    //   width: '250px',
-    //   data: {name: this.name, animal: this.animal}
-    // });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('The dialog was closed');
-    //   this.animal = result;
-    // });
   }
 
   enableEditingCondition(todo: any): boolean {
@@ -82,8 +74,16 @@ export class MainTableComponent implements OnInit {
   }
 
   delete(id: number): void {
-    this.http.post(`${routes.serverURL}/${routes.deleteTodo}`, {todoId: id}).subscribe(allTodosWithoutDeleted => {
-      this.createPagination(allTodosWithoutDeleted);
+    const dialogRef = this.dialog.open(DialogDeleteComponent, {
+      width: deleteDialog.width,
+      data: {isDelete: this.isDelete }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.http.post(`${routes.serverURL}/${routes.deleteTodo}`, {todoId: id}).subscribe(allTodosWithoutDeleted => {
+          this.createPagination(allTodosWithoutDeleted);
+        });
+      }
     });
   }
 

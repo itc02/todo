@@ -1,1 +1,7 @@
-<p>dialog-delete works!</p>
+<div mat-dialog-content>
+  <p>Do you really want to delete?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="warn" (click)="cancel()">No</button>
+  <button mat-raised-button class="ok" [mat-dialog-close]="data.isDelete">Yes</button>
+</div>

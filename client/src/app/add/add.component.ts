@@ -4,12 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { routes, snack, angularComponent } from '../../config/constants';
 
 @Component({
-  selector: angularComponent.selector.add,
   templateUrl: angularComponent.templateUrl.add,
   styleUrls: angularComponent.styleUrls.add
 })
 
-export class AddComponent implements OnInit{
+export class AddComponent implements OnInit {
   description = '';
   assignTo = '';
   newUser = '';

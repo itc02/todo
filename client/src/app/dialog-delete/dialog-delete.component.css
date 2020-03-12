@@ -1,0 +1,11 @@
+p {
+  text-align: center;
+}
+
+.mat-dialog-actions {
+  float: right;
+}
+
+.ok{
+  color: #28a745;
+}

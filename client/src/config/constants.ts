@@ -11,6 +11,28 @@ export const routes = {
   updateTodos: 'updateTodos'
 };
 
+export const angularComponent = {
+  selector: {
+    app: 'app-root',
+    mainTable: 'app-main-table',
+    users: 'app-users'
+  },
+  templateUrl: {
+    app: './app.component.html',
+    mainTable: './main-table.component.html',
+    users: './users.component.html',
+    add: './add.component.html',
+    dialogDelete: 'dialog-delete.component.html'
+  },
+  styleUrls: {
+    app: ['./app.component.css'],
+    mainTable: ['./main-table.component.css'],
+    users: ['./users.component.css'],
+    add: ['./add.component.css'],
+    dialogDelete: ['dialog-delete.component.css']
+  }
+};
+
 export const snack = {
   duration: 3000,
   close: 'Close',
@@ -26,23 +48,6 @@ export const snack = {
   }
 };
 
-export const angularComponent = {
-  selector: {
-    app: 'app-root',
-    mainTable: 'app-main-table',
-    users: 'app-users',
-    add: 'app-add'
-  },
-  templateUrl: {
-    app: './app.component.html',
-    mainTable: './main-table.component.html',
-    users: './users.component.html',
-    add: './add.component.html'
-  },
-  styleUrls: {
-    app: ['./app.component.css'],
-    mainTable: ['./main-table.component.css'],
-    users: ['./users.component.css'],
-    add: ['./add.component.css']
-  }
-}
+export const deleteDialog = {
+  width: '300px'
+};

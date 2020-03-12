@@ -17,8 +17,9 @@ import { AppComponent } from './app.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { UsersComponent } from './users/users.component';
 import { AddComponent } from './add/add.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -51,6 +52,9 @@ const appRoutes: Routes = [
         BrowserModule,
         HttpClientModule,
         BrowserAnimationsModule
+    ],
+    entryComponents: [
+      DialogDeleteComponent
     ],
     providers: [],
     bootstrap: [AppComponent]
