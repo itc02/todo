@@ -7,5 +7,4 @@ import { angularComponent } from '../config/constants';
   styleUrls: angularComponent.styleUrls.app
 })
 
-export class AppComponent {
-}
+export class AppComponent { }

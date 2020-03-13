@@ -16,10 +16,11 @@ export class UsersComponent implements OnInit {
   users: any;
   unpaginatedUsers: any;
   isDelete = true;
+  rowsInOnePage = [5, 10];
 
   constructor(private http: HttpClient, private dialog: MatDialog) { }
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @Output() event = new EventEmitter<any>();
 
   ngOnInit(): void {

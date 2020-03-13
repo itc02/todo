@@ -27,6 +27,7 @@ export class MainTableComponent implements OnInit {
   newDescription = '';
   newAssignation = '';
   isDelete = true;
+  rowsInOnePage = [5, 10];
 
   constructor(private http: HttpClient, private dialog: MatDialog) { }
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -138,5 +139,10 @@ export class MainTableComponent implements OnInit {
         return item.id;
       }
     });
+  }
+
+  applyFilter(event: any) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.todos.filter = filterValue.trim().toLowerCase();
   }
 }

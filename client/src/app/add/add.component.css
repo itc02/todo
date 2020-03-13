@@ -1,18 +1,20 @@
 button {
     margin-top: 10px;
     margin-left: 20px;
-    /* border: 1px solid green; */
     background-color: #28a745;
-    color: white
+    color: white;
 }
-mat-form-field{
+
+mat-form-field {
     margin: 20px;
 }
-.wrongData, .rightData{
+
+.wrongData, .rightData {
     color: red;
     margin-left: 20px;
     font-size: 12px;
 }
-.rightData{
-    color: green
+
+.rightData {
+    color: green;
 }

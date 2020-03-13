@@ -1,6 +1,11 @@
-button{
-    width: 100%
-}
 .overflow{
-    overflow: visible;
+  overflow: visible;
+}
+
+.usersTitle, .action  {
+  text-align: center;
+}
+
+.table, button {
+  width: 100%;
 }
