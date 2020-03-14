@@ -15,12 +15,17 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { AppComponent } from './app.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { UsersComponent } from './users/users.component';
 import { AddComponent } from './add/add.component';
 import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
+import { DialogEditComponent } from './dialog-edit/dialog-edit.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full'},
@@ -34,7 +39,8 @@ const appRoutes: Routes = [
     MainTableComponent,
     UsersComponent,
     AddComponent,
-    DialogDeleteComponent
+    DialogDeleteComponent,
+    DialogEditComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -51,12 +57,18 @@ const appRoutes: Routes = [
     MatPaginatorModule,
     MatDialogModule,
     MatGridListModule,
+    MatDatepickerModule,
+    FormsModule,
+    MatNativeDateModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule
   ],
   entryComponents: [
-  DialogDeleteComponent
+    DialogDeleteComponent,
+    DialogEditComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

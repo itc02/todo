@@ -1,30 +1,31 @@
 class TodosController < ApplicationController
     def get
-        render :json => TodoList.all
+        render :json => get_all_todos
     end
 
     def add
-        TodoList.create :date => params[:date], :description => params[:description], :assigned_to => params[:assignTo]
-        render :json => {isOkay: true}
+        user = User.find_by(:id => params[userId])
+        TodoList.create(:title => params[:title], :deadline => params[:deadline], :description => params[:description], :user_id => user.id)
+        render :json => get_all_todos
     end
 
     def delete
         TodoList.find(params[:todoId]).destroy
-        render :json => TodoList.all
+        render :json => get_all_todos
     end
-
+    
     def update
-        TodoList.update(params[:id], :date => params[:date], :description => params[:description], :assigned_to => params[:assigned_to])
-        render :json => TodoList.all
+        user = User.find_by(:name => params[:assigned_to])
+        TodoList.update(params[:id], :title => params[:title], :deadline => params[:deadline], :description => params[:description], :user_id => user.id)
+        render :json => get_all_todos
     end
 
     def disable
         TodoList.update(params[:id], :is_disabled => params[:is_disabled])
-        render :json => TodoList.all
+        render :json => get_all_todos
     end
 
-    def update_todos
-        TodoList.where(:assigned_to => params[:deletedUserName]).update_all(:assigned_to => 'Deleted')
-        render :json => TodoList.all
+    def get_all_todos
+        TodoList.joins(:user).select("todo_lists.id, todo_lists.title, todo_lists.description, users.name, todo_lists.deadline, is_disabled").as_json
     end
 end

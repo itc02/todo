@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { angularComponent, deleteDialog } from '../../config/constants';
+import { angularComponent } from '../../config/constants';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+
 @Component({
   styleUrls: angularComponent.styleUrls.dialogDelete,
   templateUrl: angularComponent.templateUrl.dialogDelete,

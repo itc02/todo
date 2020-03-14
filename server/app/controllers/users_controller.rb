@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
     def get
-        render :json => User.all.order('name ASC')
+        render :json => User.all.select("users.id, users.name")
     end
 
     def add

@@ -82,3 +82,14 @@ mat-form-field-infix {
 mat-form-field {
   width: 100%;
 }
+
+i {
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+.dropdown {
+  padding: 0 !important;
+  width: 20px !important;
+}
