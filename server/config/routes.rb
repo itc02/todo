@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   get 'getTodos', to: 'todos#get'
-  post 'addTodo', to: 'todos#add'
   get 'getUsers', to: 'users#get'
+  get 'getStatuses', to: 'statuses#get'
+  post 'addTodo', to: 'todos#add'
   post 'getUserById', to: 'todos#get_by_id'
   post 'addUser', to: 'users#add'
   post 'deleteTodo', to: 'todos#delete'

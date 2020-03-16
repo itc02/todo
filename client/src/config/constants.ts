@@ -1,5 +1,6 @@
 export const routes = {
   serverURL: 'http://localhost:3000',
+  getStatuses: 'getStatuses',
   getTodos: 'getTodos',
   getUserById: 'getUserById',
   getUsers: 'getUsers',

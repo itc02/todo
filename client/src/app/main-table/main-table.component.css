@@ -1,3 +1,8 @@
+.all {
+  width: 70%;
+  margin: auto;
+}
+
 table {
   width: 100%;
 }
@@ -15,10 +20,6 @@ h1{
   display: none;
 }
 
-button {
-  width: 80px;
-}
-
 mat-form-field-infix {
   border: 0 !important;
 }
@@ -26,7 +27,7 @@ mat-form-field-infix {
 i {
   font-weight: bold;
   cursor: pointer;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .dropdown {
@@ -36,15 +37,40 @@ i {
 
 .additionalFunctionality {
   display: flex;
-  justify-content: flex-start;
-  padding: 10px;
+  justify-content: space-between;
+  padding-top: 10px;
+  /* margin-bottom: 5px; */
 }
 
 .filter{
-  height: 45px !important;
+  /* height: 45px !important; */
 }
 
 .filterBy {
   display: flex;
   justify-content: flex-start;
+}
+
+.addButtons {
+  float: right;
+}
+
+.addButton {
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: lightseagreen;
+  color: white;
+}
+
+.filters {
+  margin-left: 10px;
+}
+
+::ng-deep .mat-input-underline {
+  display: none;
+}
+
+.dropdownFilters {
+  font-size: 39px;
+  border-bottom: 1px solid #949494;
 }

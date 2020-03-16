@@ -10,16 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_14_113528) do
+ActiveRecord::Schema.define(version: 2020_03_16_082236) do
+
+  create_table "statuses", force: :cascade do |t|
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "todo_lists", force: :cascade do |t|
     t.string "description", null: false
-    t.integer "user_id", default: 0, null: false
+    t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "is_disabled"
+    t.string "title"
     t.datetime "deadline"
-    t.string "title", null: false
+    t.integer "status_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -28,5 +35,6 @@ ActiveRecord::Schema.define(version: 2020_03_14_113528) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "todo_lists", "statuses"
   add_foreign_key "todo_lists", "users"
 end

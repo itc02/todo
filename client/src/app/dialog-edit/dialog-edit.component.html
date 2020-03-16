@@ -13,10 +13,21 @@
 </mat-form-field>
 
 <mat-form-field>
+  <mat-label>
+      New status
+  </mat-label>
+  <mat-select [value]="data.status">
+    <mat-option *ngFor="let status of data.statuses" [value]="status.status">
+      {{ status.status }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
     <mat-label>
         New deadline
     </mat-label>
-    <input matInput [matDatepicker]="picker" [(ngModel)]="data.deadline" [value]="data.deadline">
+    <input matInput="date" [matDatepicker]="picker" [(ngModel)]="data.deadline" [value]="data.deadline">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>

@@ -28,8 +28,9 @@ export class MainTableComponent implements OnInit {
   unpaginatedTodos: any;
   positions: any;
   users: any;
-  columns = ['actions', 'title', 'name', 'deadline'];
-  filterBy = ['Title', 'Name', 'Deadline'];
+  statuses: any;
+  columns = ['actions', 'title', 'status', 'name', 'deadline'];
+  filterBy = ['Title', 'Status', 'Assigned to', 'Due date'];
   disabledBgColor: object = { backgroundColor: '#fafafa', color: 'rgba(0,0,0,.26)'};
   transparentBgColor: object = { backgroundColor: 'transparent', color: 'black' };
   disabledRowsId: number[] = [];
@@ -41,6 +42,7 @@ export class MainTableComponent implements OnInit {
   resultsLength = 0;
   isLoadingResults = true;
   isRateLimitReached = false;
+  filterString = this.filterBy[0];
 
   constructor(private http: HttpClient, private dialog: MatDialog) { }
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -50,25 +52,26 @@ export class MainTableComponent implements OnInit {
   ngOnInit(): void {
     this.getTodos();
     this.getUsers();
+    this.getStatuses();
   }
 
   add(): void {
     this.openAddDialog().afterClosed().subscribe(result => {
-      if(result) {
+      if (result) {
         const { title, description, assignTo, deadline } = result;
         this.addTodo(title, description, assignTo, deadline);
       }
-    })
+    });
   }
 
-  edit(index: number, title: string, description: string, user: string, deadline: string, isDisabled: boolean): void {
+  edit(index: number, title: string, description: string, status: string, user: string, deadline: string, isDisabled: boolean): void {
     if (!isDisabled) {
       this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
         this.users = allUsers;
         this.editIndexId = index;
       });
-      this.openEditDialog(title, description, user, deadline).afterClosed().subscribe(result => {
-        if(result) {
+      this.openEditDialog(title, status, description, user, deadline).afterClosed().subscribe(result => {
+        if (result) {
           this.editData(result);
         }
       });
@@ -87,9 +90,12 @@ export class MainTableComponent implements OnInit {
     this.handleTodoForDisabling(id);
     this.disableTodo(id);
   }
+  chooseFilter(filter: string) {
+    this.filterString = filter;
+  }
 
   openTodo(): void {
-    
+
   }
   // Helpers
   getTodos(): void {
@@ -109,6 +115,13 @@ export class MainTableComponent implements OnInit {
         map(name => name ? this._filter(name) : this.users.slice())
       );
     });
+  }
+
+  getStatuses(): void {
+    this.http.get(`${routes.serverURL}/${routes.getStatuses}`).subscribe(allStatuses => {
+      console.log(allStatuses)
+      this.statuses = allStatuses;
+    })
   }
 
   createPagination(data: any) {
@@ -133,7 +146,7 @@ export class MainTableComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.todos.filterPredicate  = filterValue.trim().toLowerCase();
   }
-  
+
   displayFn(user: User): string {
     return user && user.name ? user.name : '';
   }
@@ -143,16 +156,18 @@ export class MainTableComponent implements OnInit {
     return this.users.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
-  openEditDialog(title: string, description: string, user: string, deadline: string): any {
+  openEditDialog(title: string, status: string, description: string, user: string, deadline: string): any {
     return this.dialog.open(DialogEditComponent, {
       width: editDialog.width,
       data: {
         dialogTitle: editDialog.editTitle,
         okText: editDialog.editOkText,
-        title, 
-        description, 
-        assignTo: user, 
+        title,
+        status,
+        description,
+        assignTo: user,
         deadline,
+        statuses: this.statuses,
         control: this.control,
         displayFn: this.displayFn,
         filteredOptions: this.filteredOptions
@@ -186,10 +201,11 @@ export class MainTableComponent implements OnInit {
       data: {
         dialogTitle: editDialog.addTitle,
         okText: editDialog.addOkText,
-        title: '', 
-        description: '', 
-        assignTo: '', 
+        title: '',
+        description: '',
+        assignTo: '',
         deadline: '',
+        statuses: this.statuses,
         control: this.control,
         displayFn: this.displayFn,
         filteredOptions: this.filteredOptions
@@ -212,7 +228,7 @@ export class MainTableComponent implements OnInit {
     });
   }
 
-  handleTodoForDisabling(id:number): void {
+  handleTodoForDisabling(id: number): void {
     const index = this.disabledRowsId.indexOf(id);
     if (index === -1) {
       this.disabledRowsId.push(id);
@@ -225,7 +241,7 @@ export class MainTableComponent implements OnInit {
     this.http.post(`${routes.serverURL}/${routes.addTodo}`, {
       title,
       description,
-      name,
+      assigned_to: name,
       deadline
     }).subscribe(allTodos => {
       this.createPagination(allTodos);
