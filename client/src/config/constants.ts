@@ -1,14 +1,14 @@
 export const routes = {
   serverURL: 'http://localhost:3000',
   getTodos: 'getTodos',
+  getUserById: 'getUserById',
   getUsers: 'getUsers',
   addTodo: 'addTodo',
   addUser: 'addUser',
   deleteTodo: 'deleteTodo',
   deleteUser: 'deleteUser',
   updateTodo: 'updateTodo',
-  disableTodo: 'disableTodo',
-  updateTodos: 'updateTodos'
+  disableTodo: 'disableTodo'
 };
 
 export const angularComponent = {
@@ -22,14 +22,18 @@ export const angularComponent = {
     mainTable: './main-table.component.html',
     users: './users.component.html',
     add: './add.component.html',
-    dialogDelete: 'dialog-delete.component.html'
+    dialogDelete: 'dialog-delete.component.html',
+    dialogEdit: './dialog-edit.component.html',
+    showTodo: './show-todo.component.html'
   },
   styleUrls: {
     app: ['./app.component.css'],
     mainTable: ['./main-table.component.css'],
     users: ['./users.component.css'],
     add: ['./add.component.css'],
-    dialogDelete: ['dialog-delete.component.css']
+    dialogDelete: ['dialog-delete.component.css'],
+    dialogEdit: ['./dialog-edit.component.css'],
+    showTodo: ['./show-todo.component.css']
   }
 };
 
@@ -51,3 +55,11 @@ export const snack = {
 export const deleteDialog = {
   width: '300px'
 };
+
+export const editDialog = {
+  width: '500px',
+  editTitle: 'Edit todo',
+  editOkText: 'Edit',
+  addTitle: 'Add todo',
+  addOkText: 'Add'
+}

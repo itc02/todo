@@ -1,12 +1,15 @@
 <div mat-dialog-content>
-    <h1>Edit todo</h1>
+    <h1>{{ data.dialogTitle }}</h1>
 </div>
 
 <mat-form-field>
     <mat-label>
         New title
     </mat-label>
-    <input matInput [(ngModel)]="data.title" [value]="data.title">
+    <input matInput #title maxlength="25" [(ngModel)]="data.title" [value]="data.title">
+    <mat-hint align="end">
+        Current length {{title.value.length}} / 25
+    </mat-hint>
 </mat-form-field>
 
 <mat-form-field>
@@ -34,10 +37,13 @@
     <mat-label>
         New description
     </mat-label>
-    <textarea rows="8" matInput [(ngModel)]="data.description" [value]="data.description"></textarea>
+    <textarea #description maxlength="256" rows="8" matInput [(ngModel)]="data.description" [value]="data.description"></textarea>
+    <mat-hint align="end">
+        Current length {{ description.value.length }}/256
+    </mat-hint>
 </mat-form-field>
 
 <div mat-dialog-actions>
-    <button mat-raised-button color="warn" (click)="cancel()">Cancel</button>
-    <button mat-raised-button class="ok" [mat-dialog-close]="{title: data.title, description: data.description, deadline: data.deadline, assignTo: data.assignTo}">Change</button>
+    <button mat-raised-button class="cancel" color="warn" (click)="cancel()">Cancel</button>
+    <button mat-raised-button class="ok" [mat-dialog-close]="{title: data.title, description: data.description, deadline: data.deadline, assignTo: data.assignTo}">{{ data.okText }}</button>
 </div>

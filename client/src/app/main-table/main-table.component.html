@@ -1,67 +1,81 @@
-<div class="tableAndUsers">
-  <div class="groupingDiv">
-    <h1 class="todoTitle">
-      Todos
-    </h1>
-    <table mat-table [dataSource]="todos" class="mat-elevation-z8">
-      <tr mat-header-row *matHeaderRowDef="['actions', 'title', 'name', 'deadline']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['actions', 'title', 'name', 'deadline']"></tr>
+<h1 class="todoTitle">
+  Todos
+</h1>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>
-          Actions
-        </th>
-        <td mat-cell *matCellDef="let todo">
-          <button mat-raised-button [matMenuTriggerFor]="menu" style="padding: 0 !important;">
-            <i class="fa fa-angle-down fa-5x" aria-hidden="true"></i>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="edit(todo.id, todo.position, todo.title, todo.description, todo.name, todo.deadline, todo.is_disabled)">
-              Edit
-            </button>
-            <button mat-menu-item (click)="delete(todo.id)">
-              Delete
-            </button>
-            <button mat-menu-item (click)="disable(todo.id)">
-              {{ todo.is_disabled ? 'Enable' : 'Disable' }}
-            </button>
-          </mat-menu>
-        </td>
-      </ng-container>
+<div class="additionalFunctionality mat-elevation-z8">
+  <button mat-flat-button (click)="add()" class="addButton">
+    Add
+  </button>
 
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>
-          Title
-        </th>
-        <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
-          {{ todo.title }}
-        </td>
-      </ng-container>
+  <mat-form-field class="filter">
+    <mat-label>Filter by</mat-label>
+    <mat-select [value]="filterBy[0]">
+      <mat-option *ngFor="let column of filterBy" [value]="column">
+        {{ column }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>
-          Assigned to
-        </th>
-        <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
-          {{ todo.name }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="deadline">
-        <th mat-header-cell *matHeaderCellDef>
-          Due date
-        </th>
-        <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
-          {{ todo.deadline }}
-        </td>
-      </ng-container>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="rowsInOnePage" showFirstLastButtons>
-    </mat-paginator>
-  </div>
-  <div class="users">
-    <app-users (event)="updateUsers($event)">
-    </app-users>
-  </div>
+  <mat-form-field class="filter">
+    <input matInput (keyup)="applyFilter($event)">
+  </mat-form-field>
 </div>
+
+<table mat-table matSort [dataSource]="todos" class="mat-elevation-z8">
+  <tr mat-header-row *matHeaderRowDef="columns">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: columns">
+  </tr>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>
+      Actions
+    </th>
+    <td mat-cell *matCellDef="let todo">
+      <button mat-raised-button [matMenuTriggerFor]="menu" style="padding: 0 !important;">
+        <i class="fa fa-angle-down fa-5x" aria-hidden="true"></i>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="edit(todo.position, todo.title, todo.description, todo.name, todo.deadline, todo.is_disabled)" [disabled]="todo.is_disabled">
+          Edit
+        </button>
+        <button mat-menu-item (click)="delete(todo.id)">
+          Delete
+        </button>
+        <button mat-menu-item (click)="disable(todo.id)">
+          {{ todo.is_disabled ? 'Enable' : 'Disable' }}
+        </button>
+      </mat-menu>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      Title
+    </th>
+    <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor" routerLink="/show/{{ todo.id }}">
+      {{ todo.title }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name" >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      Assigned to
+    </th>
+    <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
+      {{ todo.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="deadline">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      Due date
+    </th>
+    <td mat-cell *matCellDef="let todo" [ngStyle]="todo.is_disabled ? disabledBgColor : transparentBgColor">
+      {{ todo.deadline }}
+    </td>
+  </ng-container>
+</table>
+
+<mat-paginator [pageSizeOptions]="rowsInOnePage" showFirstLastButtons>
+</mat-paginator>

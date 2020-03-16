@@ -19,18 +19,19 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSortModule } from '@angular/material/sort';
 
 import { AppComponent } from './app.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { UsersComponent } from './users/users.component';
-import { AddComponent } from './add/add.component';
 import { DialogDeleteComponent } from './dialog-delete/dialog-delete.component';
 import { DialogEditComponent } from './dialog-edit/dialog-edit.component';
+import { ShowTodoComponent } from './show-todo/show-todo.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full'},
   { path: 'main', component: MainTableComponent},
-  { path: 'add', component: AddComponent }
+  { path: 'show/:id', component: ShowTodoComponent }
 ];
 
 @NgModule({
@@ -38,9 +39,9 @@ const appRoutes: Routes = [
     AppComponent,
     MainTableComponent,
     UsersComponent,
-    AddComponent,
     DialogDeleteComponent,
-    DialogEditComponent
+    DialogEditComponent,
+    ShowTodoComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -62,6 +63,7 @@ const appRoutes: Routes = [
     MatNativeDateModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    MatSortModule,
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule

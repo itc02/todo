@@ -2,41 +2,17 @@ table {
   width: 100%;
 }
 
-th {
-  text-align: center !important;
-}
-
 td {
-  text-align: center !important;
   padding: 0 !important;
+  width: 25%;
 }
 
-.edit, .delete, .disable {
-  color: white;
-  cursor: pointer;
-}
-
-.edit {
-  background-color: #5bc0de;
-}
-
-.delete {
-  background-color: #d9534f;
-}
-
-.disable {
-  background-color: #747c7c;
-}
-
-.tableAndUsers {
-  display: flex;
-  justify-content: space-between;
-}
-
-input, mat-select {
+h1{
   text-align: center;
-  font-size: 16px;
-  font-weight: bold;
+}
+
+.mat-form-field-underline {
+  display: none;
 }
 
 button {
@@ -45,42 +21,6 @@ button {
 
 mat-form-field-infix {
   border: 0 !important;
-}
-
-.buttonsAfterEdit {
-    margin: 10px 10px 10px 0;
-}
-
-.users {
-  width: 50%;
-  margin-left: 15px;
-}
-
-.disableButton {
-  background-color: #545b62;
-  color: white;
-}
-
-.editButton {
-  background-color: #117a8b;
-  color: white;
-}
-
-.todoTitle {
-  text-align:center;
-}
-
-.groupingDiv {
-  width: 100%;
-}
-
-.users {
-  width: 50%;
-  margin-left: 15px;
-}
-
-mat-form-field {
-  width: 100%;
 }
 
 i {
@@ -92,4 +32,19 @@ i {
 .dropdown {
   padding: 0 !important;
   width: 20px !important;
+}
+
+.additionalFunctionality {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.filter{
+  height: 45px !important;
+}
+
+.filterBy {
+  display: flex;
+  justify-content: flex-start;
 }
