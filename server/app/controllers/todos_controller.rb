@@ -1,5 +1,6 @@
 class TodosController < ApplicationController
     def get
+      TodoList.where(:user_id => nil).update_all(:user_id => 1)
       render :json => get_all_todos
     end
 
@@ -7,12 +8,12 @@ class TodosController < ApplicationController
         render :json => (
           TodoList
           .where(:id => params[:id])
-          .joins(:user, :status)
+          .joins(:users, :state)
           .select("
             todo_lists.title,
             todo_lists.description,
-            statuses.status,
-            users.name,
+            states.state_name,
+            users.user_name,
             todo_lists.deadline"
           )
           .as_json
@@ -21,14 +22,12 @@ class TodosController < ApplicationController
 
     def add
         user = get_user_by_name
-        status = get_status_by_name
-
         TodoList.create(
           :title => params[:title],
+          :state_id => 1,
           :deadline => params[:deadline],
           :description => params[:description],
-          :user_id => user.id,
-          :status_id => status.id
+          :user_id => user.id
         )
         render :json => get_all_todos
     end
@@ -42,7 +41,7 @@ class TodosController < ApplicationController
 
     def update
         user = get_user_by_name
-        status = get_status_by_name
+        state = get_state_by_name
 
         TodoList.update(
           params[:id],
@@ -50,42 +49,37 @@ class TodosController < ApplicationController
           :deadline => params[:deadline],
           :description => params[:description],
           :user_id => user.id,
-          :status_id => status.id
+          :state_id => state.id
         )
         render :json => get_all_todos
     end
 
-    def disable
-        TodoList.update(
-          params[:id],
-          :is_disabled => params[:is_disabled]
-        )
-        render :json => get_all_todos
+    def delete_all
+      TodoList.delete_all
+      render :json => {} 
     end
 
     def get_all_todos
-        TodoList
-        .joins(:user, :status)
+        TodoList.joins(:state, :user)
         .select("
           todo_lists.id,
           todo_lists.title,
           todo_lists.description,
-          users.name,
-          statuses.status,
-          todo_lists.deadline,
-          todo_lists.is_disabled")
+          users.user_name,
+          states.state_name,
+          todo_lists.deadline")
         .as_json
     end
 
     def get_user_by_name
       User.find_by(
-        :name => params[:assigned_to]
+        :user_name => params[:assigned_to]
       )
     end
 
-    def get_status_by_name
-      Status.find_by(
-        :status => params[:status_id]
+    def get_state_by_name
+      State.find_by(
+        :state_name => params[:state]
       )
     end
 end

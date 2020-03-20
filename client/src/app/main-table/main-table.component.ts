@@ -1,21 +1,28 @@
+//************************************ Main ***********************************
 import { Component, OnInit, ViewChild } from '@angular/core';
+
+//************************************ HTTP ************************************
 import { HttpClient } from '@angular/common/http';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { routes, angularComponent, deleteDialog, editDialog } from '../../config/constants';
+
+//*********************************** Constants **************************************
+import { routes, angularComponent, dialog, editDialog, snack } from '../../config/constants';
+
+//*********************************** Dialog **********************************
 import { MatDialog } from '@angular/material/dialog';
 import { DialogDeleteComponent } from '../dialog-delete/dialog-delete.component';
 import { DialogEditComponent } from '../dialog-edit/dialog-edit.component';
-import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { DialogAddUserComponent } from '../dialog-add-user/dialog-add-user.component';
+import { DialogShowUsersComponent } from '../dialog-show-users/dialog-show-users.component';
+
+//************************************ Sorting *******************************
 import { MatSort } from '@angular/material/sort';
 
+//************************************ Pagination ********************************
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
-interface User {
-  id: number,
-  name: string
-}
+//************************************ Snack bar ***********************************
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: angularComponent.selector.mainTable,
@@ -25,34 +32,25 @@ interface User {
 
 export class MainTableComponent implements OnInit {
   todos: any;
-  unpaginatedTodos: any;
-  positions: any;
-  users: any;
-  statuses: any;
-  columns = ['actions', 'title', 'status', 'name', 'deadline'];
-  filterBy = ['Title', 'Status', 'Assigned to', 'Due date'];
-  disabledBgColor: object = { backgroundColor: '#fafafa', color: 'rgba(0,0,0,.26)'};
-  transparentBgColor: object = { backgroundColor: 'transparent', color: 'black' };
+  unpaginatedTodos = [];
+  columns = ['actions', 'title', 'state_name', 'user_name', 'deadline'];
+  columnsHeaders = ['Title', 'State', 'Assigned to', 'Due date'];
   disabledRowsId: number[] = [];
   editIndexId = 0;
-  rowsInOnePage = [5, 10];
-  isDelete = true;
-  control = new FormControl();
-  filteredOptions: Observable<User[]>;
-  resultsLength = 0;
-  isLoadingResults = true;
-  isRateLimitReached = false;
-  filterString = this.filterBy[0];
+  rowsInOnePage: number[] = [5, 10];
+  filterString = this.columnsHeaders[0];
 
-  constructor(private http: HttpClient, private dialog: MatDialog) { }
+  constructor(
+    private http: HttpClient, 
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  // Main methods
+//*************************************************** Main methods ***********************************************************
   ngOnInit(): void {
     this.getTodos();
-    this.getUsers();
-    this.getStatuses();
   }
 
   add(): void {
@@ -60,138 +58,73 @@ export class MainTableComponent implements OnInit {
       if (result) {
         const { title, description, assignTo, deadline } = result;
         this.addTodo(title, description, assignTo, deadline);
+        this.snackBar.open(snack.todo.add, snack.undo);
       }
     });
   }
 
-  edit(index: number, title: string, description: string, status: string, user: string, deadline: string, isDisabled: boolean): void {
-    if (!isDisabled) {
-      this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
-        this.users = allUsers;
-        this.editIndexId = index;
-      });
-      this.openEditDialog(title, status, description, user, deadline).afterClosed().subscribe(result => {
-        if (result) {
-          this.editData(result);
-        }
-      });
-    }
+  edit(todo: any): void {
+    const { position, title, description, state_name, user_name, deadline } = todo;
+    this.editIndexId = position;
+    this.openEditDialog(title, state_name, description, user_name, deadline).afterClosed().subscribe(result => {
+      if (result) {
+        this.editData(result);
+        this.snackBar.open(snack.todo.edit, snack.undo);
+      }
+    });
   }
 
   delete(id: number): void {
     this.openDeleteDialog().afterClosed().subscribe(result => {
       if (result) {
         this.deleteTodo(id);
+        this.snackBar.open(snack.todo.delete, snack.undo);
       }
     });
   }
-
-  disable(id: number): void {
-    this.handleTodoForDisabling(id);
-    this.disableTodo(id);
-  }
-  chooseFilter(filter: string) {
-    this.filterString = filter;
+  
+  addUser(): void {
+    this.openAddUserDialog();
   }
 
-  openTodo(): void {
-
-  }
-  // Helpers
-  getTodos(): void {
-    this.http.get(`${routes.serverURL}/${routes.getTodos}`).subscribe(allTodos => {
-      this.createPagination(allTodos);
-      this.fillDisabledRowsIdArray(allTodos);
-      this.todos.sort = this.sort;
+  openUsersList() {
+    this.openUsersListDialog().afterClosed().subscribe(() => {
+      this.getTodos();
     });
   }
 
-  getUsers(): void {
-    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
-      this.users = allUsers;
-      this.filteredOptions = this.control.valueChanges.pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.name),
-        map(name => name ? this._filter(name) : this.users.slice())
-      );
-    });
-  }
-
-  getStatuses(): void {
-    this.http.get(`${routes.serverURL}/${routes.getStatuses}`).subscribe(allStatuses => {
-      console.log(allStatuses)
-      this.statuses = allStatuses;
+  deleteAll() {
+    this.openDeleteDialog().afterClosed().subscribe(result => {
+      if(result) {
+        this.deleteAllTodos();
+        this.unpaginatedTodos = [];
+      }
     })
   }
+//*************************************************** End of main methods *****************************************************
 
-  createPagination(data: any) {
-    for (let i = 0; i < data.length; i++) {
-      data[i].position = i;
-      data[i].deadline = data[i].deadline.split('T')[0];
-    }
-    this.unpaginatedTodos = data;
-    this.todos = new MatTableDataSource(data);
-    this.todos.paginator = this.paginator;
-  }
-
-  fillDisabledRowsIdArray(data: any) {
-    this.disabledRowsId = data.map(item => {
-      if (item.is_disabled) {
-        return item.id;
-      }
-    });
-  }
-
-  applyFilter(event: any): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.todos.filterPredicate  = filterValue.trim().toLowerCase();
-  }
-
-  displayFn(user: User): string {
-    return user && user.name ? user.name : '';
-  }
-
-  _filter(name: string): User[] {
-    const filterValue = name.toLowerCase();
-    return this.users.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
-  }
-
-  openEditDialog(title: string, status: string, description: string, user: string, deadline: string): any {
+//*************************************************** Open dialogs methods ****************************************************
+  openEditDialog(title: string, state: string, description: string, user: string, deadline: string): any {
     return this.dialog.open(DialogEditComponent, {
       width: editDialog.width,
       data: {
         dialogTitle: editDialog.editTitle,
         okText: editDialog.editOkText,
         title,
-        status,
+        state,
         description,
         assignTo: user,
         deadline,
-        statuses: this.statuses,
-        control: this.control,
-        displayFn: this.displayFn,
-        filteredOptions: this.filteredOptions
       }
-    })
-  }
-
-  editData(result): void {
-    const todo = this.todos.filteredData[this.editIndexId];
-    this.http.post(`${routes.serverURL}/${routes.updateTodo}`, {
-      id: todo.id,
-      deadline: result.deadline || todo.date,
-      title: result.title || todo.title,
-      description: result.description || todo.description,
-      assigned_to: result.assignTo || todo.assigned_to
-    }).subscribe(allTodos => {
-      this.createPagination(allTodos);
     });
   }
 
   openDeleteDialog(): any {
     return this.dialog.open(DialogDeleteComponent, {
-      width: deleteDialog.width,
-      data: {isDelete: this.isDelete }
+      width: dialog.deleteTodo.width,
+      data: { 
+        isDelete: true 
+      }
     });
   }
 
@@ -205,46 +138,99 @@ export class MainTableComponent implements OnInit {
         description: '',
         assignTo: '',
         deadline: '',
-        statuses: this.statuses,
-        control: this.control,
-        displayFn: this.displayFn,
-        filteredOptions: this.filteredOptions
+        states: '',
       }
+    });
+  }
+
+  openAddUserDialog(): any {
+    return this.dialog.open(DialogAddUserComponent, {
+      width: dialog.addUser.width,
+    });
+  }
+
+  openUsersListDialog(): any {
+    return this.dialog.open(DialogShowUsersComponent, {
+      width: dialog.openUsers.width,
+      height: dialog.openUsers.height
+    });
+  }
+//******************************************************** End of dialogs methods **********************************************
+
+//**************************************************** Methods for filtration ***************************************************
+  chooseFilter(filter: string) {
+    this.filterString = filter;
+  }
+
+  applyFilter(event: any): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.todos.filter = filterValue.trim().toLowerCase();
+    this.todos.filterPredicate = (data, filter: string) => {
+      return data[this.columns[this.columnsHeaders.indexOf(this.filterString) + 1]].toLowerCase().includes(filter);
+    }
+  }
+//************************************************** End of methods for filtation ************************************************
+
+//******************************************************* Methods to get main data ***********************************************
+  getTodos(): void {
+    this.http.get(`${routes.serverURL}/${routes.getTodos}`).subscribe(allTodos => {
+      this.createPagination(allTodos);
+      this.todos.sort = this.sort;
+    });
+  }
+//*********************************************** End of methods to get main data ***************************************************
+
+//*********************************************** Methods to post data through http *********************************************
+  addTodo(title: string, description: string, name, deadline: any): void {
+    this.http.post(`${routes.serverURL}/${routes.addTodo}`, {
+      title,
+      description,
+      assigned_to: name.user_name,
+      deadline: new Date(deadline.getTime() + 60 * 60 * 24 * 1000)
+    }).subscribe(allTodos => {
+      this.createPagination(allTodos);
     })
+  }
+
+  editData(result: any): void {
+    const todo = this.todos.filteredData[this.editIndexId];
+    const day = 24 * 60 * 60 * 1000;
+    this.http.post(`${routes.serverURL}/${routes.updateTodo}`, {
+      id: todo.id,
+      deadline: typeof(result.deadline) === 'string' ? result.deadline : new Date(result.deadline.getTime() + day) || todo.date,
+      title: result.title || todo.title,
+      description: result.description || todo.description,
+      state: result.state || todo.state_name,
+      assigned_to: result.assignTo.user_name || todo.assigned_to.user_name
+    }).subscribe(allTodos => {
+      this.createPagination(allTodos);
+      this.todos.sort = this.sort;
+    });
   }
 
   deleteTodo(id: number): void {
     this.http.post(`${routes.serverURL}/${routes.deleteTodo}`, {todoId: id}).subscribe(allTodosWithoutDeleted => {
       this.createPagination(allTodosWithoutDeleted);
+      this.todos.sort = this.sort;
     });
   }
 
-  disableTodo(id: number): void {
-    this.http.post(`${routes.serverURL}/${routes.disableTodo}`, {
-      id,
-      is_disabled: this.disabledRowsId.indexOf(id) >= 0
-    }).subscribe(allTodos => {
-      this.createPagination(allTodos);
+  deleteAllTodos(): void {
+    this.http.get(`${routes.serverURL}/${routes.deleteAllTodos}`).subscribe(() => {
+      this.todos = [];
     });
   }
+//********************************************* End of methods to post data through http **************************************
 
-  handleTodoForDisabling(id: number): void {
-    const index = this.disabledRowsId.indexOf(id);
-    if (index === -1) {
-      this.disabledRowsId.push(id);
-    } else {
-      this.disabledRowsId.splice(index, 1);
+//*********************************************************** Other methods *******************************************************
+  createPagination(data: any): void {
+    this.unpaginatedTodos = data;
+    for (let i = 0; i < data.length; i++) {
+      data[i].position = i;
+      data[i].deadline = data[i].deadline.split('T')[0];
     }
-  }
-
-  addTodo(title: string, description: string, name: string, deadline: any): void {
-    this.http.post(`${routes.serverURL}/${routes.addTodo}`, {
-      title,
-      description,
-      assigned_to: name,
-      deadline
-    }).subscribe(allTodos => {
-      this.createPagination(allTodos);
-    })
+    this.todos = new MatTableDataSource(data);
+    this.todos.paginator = this.paginator;
   }
 }
+//****************************************************** End of other methods ********************************************************

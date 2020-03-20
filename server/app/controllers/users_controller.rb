@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
     def get
-        render :json => User.all.select("users.id, users.name")
+        render :json => User.select("users.id, users.user_name").drop(1)
     end
 
     def add
-        if !User.find_by name: params[:name]
-            User.create :name => params[:name]
+        if !User.find_by(:user_name => params[:user_name])
+            User.create(:user_name => params[:user_name])
             render :json => { isOkay: true }
         else
             render :json => { isOkay: false }
@@ -13,8 +13,9 @@ class UsersController < ApplicationController
     end
 
     def delete
-        user = User.find(params[:userId]);
-        User.find(params[:userId]).destroy
-        render :json => {allUsersWithoutDeleted: User.all.order('name ASC'), deletedUserName: user[:name]}
+        params[:IDs].each do |id|
+            User.find(id).destroy
+        end
+        render :json => User.select("users.id, users.user_name").drop(1)
     end
 end

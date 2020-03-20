@@ -1,60 +1,82 @@
 export const routes = {
   serverURL: 'http://localhost:3000',
-  getStatuses: 'getStatuses',
+  getStates: 'getStates',
   getTodos: 'getTodos',
   getUserById: 'getUserById',
   getUsers: 'getUsers',
   addTodo: 'addTodo',
   addUser: 'addUser',
   deleteTodo: 'deleteTodo',
-  deleteUser: 'deleteUser',
+  deleteUsers: 'deleteUsers',
   updateTodo: 'updateTodo',
-  disableTodo: 'disableTodo'
+  deleteAllTodos: 'deleteAllTodos'
 };
 
 export const angularComponent = {
   selector: {
     app: 'app-root',
     mainTable: 'app-main-table',
-    users: 'app-users'
   },
   templateUrl: {
     app: './app.component.html',
     mainTable: './main-table.component.html',
-    users: './users.component.html',
-    add: './add.component.html',
-    dialogDelete: 'dialog-delete.component.html',
+    dialogDelete: './dialog-delete.component.html',
     dialogEdit: './dialog-edit.component.html',
-    showTodo: './show-todo.component.html'
+    dialogAddUser: './dialog-add-user.component.html',
+    dialogShowUsers: './dialog-show-users.component.html'
   },
   styleUrls: {
     app: ['./app.component.css'],
     mainTable: ['./main-table.component.css'],
-    users: ['./users.component.css'],
-    add: ['./add.component.css'],
     dialogDelete: ['dialog-delete.component.css'],
     dialogEdit: ['./dialog-edit.component.css'],
-    showTodo: ['./show-todo.component.css']
+    dialogAddUser: ['./dialog-add-user.component.css'],
+    dialogShowUsers: ['./dialog-show-users.component.css']
   }
 };
 
 export const snack = {
-  duration: 3000,
-  close: 'Close',
-  success: {
-    todo: 'Todo was added successfully',
-    user: 'User was added successfully',
-    todoAndUser: 'Todo and user were added successfully'
+  duration: 4000,
+  cancel: 'Cancel',
+  undo: 'Undo',
+  verticalPosition: 'top',
+  horizontalPosition: 'right',
+  todo: {
+    add: 'Todo was added successfully',
+    delete: 'Todo was deleted successfully',
+    edit: 'Todo was edited successfully'
   },
-  error: {
-    todo: 'Some data is filled wrong',
-    user: 'User already exists',
-    todoAndUser: 'Todo was added successfuly, but user already exists'
+  user: {
+    add: 'User was added successfully',
+    delete: 'User was deleted successfully',
+    exist: 'User already exists'
   }
 };
 
-export const deleteDialog = {
-  width: '300px'
+export const dialog = {
+  deleteTodo: {
+    width: '300px'
+  },
+  addUser: {
+    width: '300px'
+  },
+  openUsers: {
+    width: '500px',
+    height: '650px'
+  },
+  editUsers: {
+    deletedUserSign: '--'
+  }
+};
+
+export const verification = {
+  title: {
+    length: 32
+  },
+  description: {
+    length: 256,
+    rows: 8
+  }
 };
 
 export const editDialog = {
