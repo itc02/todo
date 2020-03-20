@@ -6,9 +6,8 @@ html, body {
 body { 
     margin: 0; 
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    background-image: url("./assets/bg-image2.jpg");
+    background-image: url("./assets/bg-image.jpg");
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: center;
-    
 }
