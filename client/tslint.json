@@ -1,5 +1,22 @@
 {
   "extends": "tslint:recommended",
+  "type": "array",
+  "items": {
+    "type": "string",
+    "enum": [
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock",
+      "check-postbrace"
+    ]
+  },
   "rules": {
     "array-type": false,
     "arrow-parens": false,

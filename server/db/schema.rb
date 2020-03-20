@@ -10,31 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_16_082236) do
+ActiveRecord::Schema.define(version: 2020_03_19_112824) do
 
-  create_table "statuses", force: :cascade do |t|
-    t.string "status"
+  create_table "states", force: :cascade do |t|
+    t.string "state_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "todo_lists", force: :cascade do |t|
     t.string "description", null: false
-    t.integer "user_id", null: false
+    t.integer "user_id", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "is_disabled"
-    t.string "title"
     t.datetime "deadline"
-    t.integer "status_id"
+    t.string "title", null: false
+    t.integer "state_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "user_name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "todo_lists", "statuses"
-  add_foreign_key "todo_lists", "users"
+  add_foreign_key "todo_lists", "states"
+  add_foreign_key "todo_lists", "users", on_delete: :nullify
 end

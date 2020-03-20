@@ -1,11 +1,18 @@
-p {
+mat-form-field {
+  width: 100%;
+}
+
+h1 {
   text-align: center;
 }
 
 .mat-dialog-actions {
   float: right;
 }
-
+.cancel, .ok {
+  width: 80px;
+}
 .ok{
-  color: #28a745;
+  background-color: #28a745;
+  color: white;
 }
