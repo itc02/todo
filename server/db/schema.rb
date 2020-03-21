@@ -10,22 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_19_112824) do
+ActiveRecord::Schema.define(version: 2020_03_20_152622) do
 
   create_table "states", force: :cascade do |t|
-    t.string "state_name"
+    t.string "state_name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "todo_lists", force: :cascade do |t|
-    t.string "description", null: false
-    t.integer "user_id", default: 0
+    t.string "title", null: false
+    t.text "description", null: false
+    t.datetime "deadline", null: false
+    t.integer "user_id"
+    t.integer "state_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "deadline"
-    t.string "title", null: false
-    t.integer "state_id"
   end
 
   create_table "users", force: :cascade do |t|

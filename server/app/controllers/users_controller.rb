@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
-    def get
-        render :json => User.select("users.id, users.user_name").drop(1)
+    def index
+        render :json => get_all_users
     end
 
-    def add
+    def create
         if !User.find_by(:user_name => params[:user_name])
             User.create(:user_name => params[:user_name])
             render :json => { isOkay: true }
@@ -12,10 +12,14 @@ class UsersController < ApplicationController
         end
     end
 
-    def delete
-        params[:IDs].each do |id|
+    def destroy
+        params[:id].split(',').each do |id|
             User.find(id).destroy
         end
-        render :json => User.select("users.id, users.user_name").drop(1)
+        render :json => get_all_users
+    end
+
+    def get_all_users
+        User.select("users.id, users.user_name").drop(1)
     end
 end

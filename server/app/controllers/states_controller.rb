@@ -1,5 +1,5 @@
 class StatesController < ApplicationController
-    def get
-        render :json => State.all
+    def index
+        render :json => State.all.select("states.state_name")
     end
 end

@@ -31,6 +31,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 
 export class MainTableComponent implements OnInit {
+ 
+  constructor(
+    private http: HttpClient, // To make HTTP requests
+    private dialog: MatDialog, // To open the dialogs
+    private snackBar: MatSnackBar // To inform about some processes in the application
+  ) { }
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
   todos: any;
   unpaginatedTodos = [];
   columns = ['actions', 'title', 'state_name', 'user_name', 'deadline'];
@@ -39,14 +48,6 @@ export class MainTableComponent implements OnInit {
   editIndexId = 0;
   rowsInOnePage: number[] = [5, 10];
   filterString = this.columnsHeaders[0];
-
-  constructor(
-    private http: HttpClient, 
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) { }
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
 
 //*************************************************** Main methods ***********************************************************
   ngOnInit(): void {
@@ -99,7 +100,7 @@ export class MainTableComponent implements OnInit {
         this.deleteAllTodos();
         this.unpaginatedTodos = [];
       }
-    })
+    });
   }
 //*************************************************** End of main methods *****************************************************
 
@@ -171,18 +172,16 @@ export class MainTableComponent implements OnInit {
   }
 //************************************************** End of methods for filtation ************************************************
 
-//******************************************************* Methods to get main data ***********************************************
+//************************************ Methods to interact with server through HTTP ***********************************************
   getTodos(): void {
-    this.http.get(`${routes.serverURL}/${routes.getTodos}`).subscribe(allTodos => {
+    this.http.get(`${routes.serverURL}/${routes.todos}`).subscribe(allTodos => {
       this.createPagination(allTodos);
       this.todos.sort = this.sort;
     });
   }
-//*********************************************** End of methods to get main data ***************************************************
 
-//*********************************************** Methods to post data through http *********************************************
   addTodo(title: string, description: string, name, deadline: any): void {
-    this.http.post(`${routes.serverURL}/${routes.addTodo}`, {
+    this.http.post(`${routes.serverURL}/${routes.todos}`, {
       title,
       description,
       assigned_to: name.user_name,
@@ -195,8 +194,7 @@ export class MainTableComponent implements OnInit {
   editData(result: any): void {
     const todo = this.todos.filteredData[this.editIndexId];
     const day = 24 * 60 * 60 * 1000;
-    this.http.post(`${routes.serverURL}/${routes.updateTodo}`, {
-      id: todo.id,
+    this.http.put(`${routes.serverURL}/${routes.todos}/${todo.id}`, {
       deadline: typeof(result.deadline) === 'string' ? result.deadline : new Date(result.deadline.getTime() + day) || todo.date,
       title: result.title || todo.title,
       description: result.description || todo.description,
@@ -209,20 +207,20 @@ export class MainTableComponent implements OnInit {
   }
 
   deleteTodo(id: number): void {
-    this.http.post(`${routes.serverURL}/${routes.deleteTodo}`, {todoId: id}).subscribe(allTodosWithoutDeleted => {
+    this.http.delete(`${routes.serverURL}/${routes.todos}/${id}`).subscribe(allTodosWithoutDeleted => {
       this.createPagination(allTodosWithoutDeleted);
       this.todos.sort = this.sort;
     });
   }
 
   deleteAllTodos(): void {
-    this.http.get(`${routes.serverURL}/${routes.deleteAllTodos}`).subscribe(() => {
+    this.http.delete(`${routes.serverURL}/${routes.deleteAllTodos}`).subscribe(() => {
       this.todos = [];
     });
   }
-//********************************************* End of methods to post data through http **************************************
+//********************************* End of methods to interact with server through HTTP **************************************
 
-//*********************************************************** Other methods *******************************************************
+//******************************************************** Other methods *******************************************************
   createPagination(data: any): void {
     this.unpaginatedTodos = data;
     for (let i = 0; i < data.length; i++) {
@@ -233,4 +231,4 @@ export class MainTableComponent implements OnInit {
     this.todos.paginator = this.paginator;
   }
 }
-//****************************************************** End of other methods ********************************************************
+//****************************************************** End of other methods **************************************************

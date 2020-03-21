@@ -14,9 +14,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class DialogShowUsersComponent implements OnInit {
 
   constructor(
-    private http: HttpClient, 
-    public dialogRef: MatDialogRef<DialogShowUsersComponent>,
-    private snackBar: MatSnackBar
+    private http: HttpClient, // To make HTTP requests
+    public dialogRef: MatDialogRef<DialogShowUsersComponent>, // To make this component dialog
+    private snackBar: MatSnackBar // To inform about some processes in the application
   ) { }
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
@@ -24,14 +24,30 @@ export class DialogShowUsersComponent implements OnInit {
   selection = new SelectionModel(true, [])
   columns = ['select', 'name'];
 
+//******************************************************* Main methods **********************************************
   ngOnInit() {
-    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
+    this.http.get(`${routes.serverURL}/${routes.users}`).subscribe(allUsers => {
       // @ts-ignore
       this.users = new MatTableDataSource(allUsers);
       this.users.paginator = this.paginator;
     })
   }
 
+  delete() {
+    this.http.delete(`${routes.serverURL}/${routes.users}/${this.selection.selected.map(row => row.id)}`).subscribe(allUsersWithoutDeleted => {
+      // @ts-ignore
+      this.users = new MatTableDataSource(allUsersWithoutDeleted);
+      this.users.paginator = this.paginator;
+      this.snackBar.open(snack.user.delete, snack.undo);
+    });
+  }
+
+  isUserSelected(): boolean {
+    return this.selection.selected.length > 0
+  }
+//*************************************************** End of main methods ********************************************
+
+//*************************************************** Methods for checkboxes *******************************************
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.users.filteredData && this.users.filteredData.length;
@@ -48,27 +64,16 @@ export class DialogShowUsersComponent implements OnInit {
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
+//********************************************** End of methods for checkboxes ***********************************************
 
+//********************************************** Method for filtration *******************************************************
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.users.filter = filterValue.trim().toLowerCase();
   }
+//****************************************** End of method for filtration ****************************************************
 
-  delete() {
-    this.http.post(`${routes.serverURL}/${routes.deleteUsers}`, {
-      IDs: this.selection.selected.map(row => row.id)
-    }).subscribe(allUsersWithoutDeleted => {
-      // @ts-ignore
-      this.users = new MatTableDataSource(allUsersWithoutDeleted);
-      this.users.paginator = this.paginator;
-      this.snackBar.open(snack.user.delete, snack.undo);
-    });
-  }
-
-  isUserSelected(): boolean {
-    return this.selection.selected.length > 0
-  }
-
+// Close dialog
   cancel(): void {
     this.dialogRef.close();
   }

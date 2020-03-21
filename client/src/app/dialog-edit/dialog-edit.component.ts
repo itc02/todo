@@ -30,9 +30,9 @@ interface Todo {
 export class DialogEditComponent {
 
   constructor(
-    public dialogRef: MatDialogRef<DialogEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Todo,
-    private http: HttpClient
+    public dialogRef: MatDialogRef<DialogEditComponent>, // To make this component dialog
+    @Inject(MAT_DIALOG_DATA) public data: Todo, // To take data from where this dialog called
+    private http: HttpClient // To make HTTP requests
   ) {}
 
   states: any
@@ -47,13 +47,12 @@ export class DialogEditComponent {
 
 //************************************************** Main methods ******************************************
   ngOnInit(): void {
-    console.log(this.data.state)
     this.getStates();
     this.getUsers();
   }
 
   getUsers(): void {
-    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
+    this.http.get(`${routes.serverURL}/${routes.users}`).subscribe(allUsers => {
       this.users = allUsers;
       this.filteredOptions = this.control.valueChanges.pipe(
         startWith(''),
@@ -65,7 +64,7 @@ export class DialogEditComponent {
   }
 
   getStates(): void {
-    this.http.get(`${routes.serverURL}/${routes.getStates}`).subscribe(allStates => {
+    this.http.get(`${routes.serverURL}/${routes.states}`).subscribe(allStates => {
       this.states = allStates;
     });
   }
@@ -116,7 +115,7 @@ export class DialogEditComponent {
   }
 //***************************************** End of methods for autocomplete *********************************************
 
-//Close dialog
+// Close dialog
   cancel(): void {
     this.dialogRef.close();
   }

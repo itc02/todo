@@ -11,20 +11,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class DialogAddUserComponent implements OnInit {
 
   constructor(
-    private http: HttpClient, 
-    public dialogRef: MatDialogRef<DialogAddUserComponent>,
-    private snackBar: MatSnackBar
+    private http: HttpClient, // To make HTTP requests
+    public dialogRef: MatDialogRef<DialogAddUserComponent>, // To make this component dialog
+    private snackBar: MatSnackBar // To inform about some processes in the application
   ) { }
 
   user: string;
   users: any;
 
+//********************************************************** Main methods *****************************************
   ngOnInit(): void{
     this.getUsers()
-  }
-
-  isUsernameValid(): boolean {
-    return this.user && this.users.indexOf(this.user) < 0
   }
 
   add(): void {
@@ -35,22 +32,34 @@ export class DialogAddUserComponent implements OnInit {
     }
   }
 
+  isUsernameValid(): boolean {
+    return this.user && this.users.indexOf(this.user) < 0
+  }
+//****************************************************** End of main methods *****************************************
+
+//******************************************** Methods to interact with server through HTTP ***********************************
   addUser() {
-    this.http.post(`${routes.serverURL}/${routes.addUser}`, {
+    this.http.post(`${routes.serverURL}/${routes.users}`, {
       user_name: this.user
-    }).subscribe(() => {
-      this.getUsers();
-      this.snackBar.open(snack.user.add, snack.undo);
-    })
+    }).subscribe(result => {
+      if (result['isOkay']) {
+        this.getUsers();
+        this.snackBar.open(snack.user.add, snack.undo);
+      } else {
+        this.snackBar.open(snack.user.exist, snack.undo);
+      }
+    });
   }
 
   getUsers(): void {
-    this.http.get(`${routes.serverURL}/${routes.getUsers}`).subscribe(allUsers => {
+    this.http.get(`${routes.serverURL}/${routes.users}`).subscribe(allUsers => {
       // @ts-ignore
       this.users = allUsers.map(user => user.user_name);
     })
   }
+//******************************************** Methods to interact with server through HTTP ***********************************
 
+// Close the dialog
   cancel(): void {
     this.dialogRef.close();
   }

@@ -1,15 +1,9 @@
 export const routes = {
   serverURL: 'http://localhost:3000',
-  getStates: 'getStates',
-  getTodos: 'getTodos',
-  getUserById: 'getUserById',
-  getUsers: 'getUsers',
-  addTodo: 'addTodo',
-  addUser: 'addUser',
-  deleteTodo: 'deleteTodo',
-  deleteUsers: 'deleteUsers',
-  updateTodo: 'updateTodo',
-  deleteAllTodos: 'deleteAllTodos'
+  states: 'states',
+  todos: 'todos',
+  users: 'users',
+  deleteAllTodos: 'todos/delete_all'
 };
 
 export const angularComponent = {

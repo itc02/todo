@@ -1,11 +1,9 @@
 Rails.application.routes.draw do
-  get 'getTodos', to: 'todos#get'
-  get 'getUsers', to: 'users#get'
-  get 'getStates', to: 'states#get'
-  get 'deleteAllTodos', to: 'todos#delete_all'
-  post 'addTodo', to: 'todos#add'
-  post 'addUser', to: 'users#add'
-  post 'deleteTodo', to: 'todos#delete'
-  post 'deleteUsers', to: 'users#delete'
-  post 'updateTodo', to: 'todos#update'
+  resources :todos, only: [:index, :create, :update, :destroy] do
+    collection do
+      delete :delete_all, to: 'todos#delete_all'
+    end
+  end
+  resources :users, only: [:index, :create, :destroy]
+  resources :states, only: :index
 end

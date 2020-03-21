@@ -8,8 +8,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 })
 export class DialogDeleteComponent {
 
-  constructor(public dialogRef: MatDialogRef<DialogDeleteComponent>, @Inject(MAT_DIALOG_DATA) public data: {isDelete: boolean}) {}
+  constructor(
+    public dialogRef: MatDialogRef<DialogDeleteComponent>, // To make this dialog dialog
+    @Inject(MAT_DIALOG_DATA) public data: { isDelete: boolean } // To take data from where this dialog called
+  ) {}
 
+  // Close the dialog
   cancel(): void {
     this.dialogRef.close();
   }
