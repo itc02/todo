@@ -13,28 +13,28 @@
 </mat-form-field>
 
 <mat-form-field *ngIf="data.state">
-<mat-label>
+  <mat-label>
     State
-</mat-label>
-<mat-select [(ngModel)]="data.state" [value]="data.state">
-  <mat-option *ngFor="let state of states" [value]="state.state_name">
-    {{ state.state_name }}
-  </mat-option>
-</mat-select>
+  </mat-label>
+  <mat-select [(ngModel)]="data.state" [value]="data.state" class="capitalize">
+    <mat-option *ngFor="let state of states" [value]="state" class="capitalize">
+      {{ state }}
+    </mat-option>
+  </mat-select>
 </mat-form-field>
 
 <mat-form-field>
   <mat-label>
     Deadline
   </mat-label>
-  <input matInput="date" [matDatepicker]="picker" [(ngModel)]="data.deadline" [value]="data.deadline">
+  <input matInput="date" [matDatepicker]="picker" [(ngModel)]="data.deadline" readonly>
   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker></mat-datepicker>
+  <mat-datepicker [startAt]="initialDeadline" #picker></mat-datepicker>
 </mat-form-field>
 
 <mat-form-field>
   <mat-label>
-      Assign to
+    Assign to
   </mat-label>
   <input matInput [(ngModel)]="data.assignTo" [matAutocomplete]="auto" [formControl]="control" (input)="onInput($event)">
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">

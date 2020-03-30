@@ -3,7 +3,8 @@ export const routes = {
   states: 'states',
   todos: 'todos',
   users: 'users',
-  deleteAllTodos: 'todos/delete_all'
+  deleteAllTodos: 'todos/delete_all',
+  getOwners: 'todos/get_owners'
 };
 
 export const angularComponent = {
@@ -43,7 +44,8 @@ export const snack = {
   user: {
     add: 'User was added successfully',
     delete: 'User was deleted successfully',
-    exist: 'User already exists'
+    exist: 'User already exists',
+    owner: 'You chose user(s) that have todo(s)'
   }
 };
 

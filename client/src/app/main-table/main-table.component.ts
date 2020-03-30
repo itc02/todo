@@ -24,6 +24,8 @@ import { MatTableDataSource } from '@angular/material/table';
 //************************************ Snack bar ***********************************
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import * as moment from 'moment';
+
 @Component({
   selector: angularComponent.selector.mainTable,
   templateUrl: angularComponent.templateUrl.mainTable,
@@ -42,7 +44,7 @@ export class MainTableComponent implements OnInit {
 
   todos: any;
   unpaginatedTodos = [];
-  columns = ['actions', 'title', 'state_name', 'user_name', 'deadline'];
+  columns = ['actions', 'title', 'state', 'user_name', 'deadline'];
   columnsHeaders = ['Title', 'State', 'Assigned to', 'Due date'];
   disabledRowsId: number[] = [];
   editIndexId = 0;
@@ -65,9 +67,9 @@ export class MainTableComponent implements OnInit {
   }
 
   edit(todo: any): void {
-    const { position, title, description, state_name, user_name, deadline } = todo;
+    const { position, title, description, state, user_name, deadline } = todo;
     this.editIndexId = position;
-    this.openEditDialog(title, state_name, description, user_name, deadline).afterClosed().subscribe(result => {
+    this.openEditDialog(title, state, description, user_name, deadline).afterClosed().subscribe(result => {
       if (result) {
         this.editData(result);
         this.snackBar.open(snack.todo.edit, snack.undo);
@@ -181,11 +183,14 @@ export class MainTableComponent implements OnInit {
   }
 
   addTodo(title: string, description: string, name, deadline: any): void {
+    deadline = moment(deadline);
+    deadline.set({D: deadline.day + 1, h: moment().format('h'), m: moment().format('m'), s: moment().format('s')});
+    console.log(name)
     this.http.post(`${routes.serverURL}/${routes.todos}`, {
       title,
       description,
-      assigned_to: name.user_name,
-      deadline: new Date(deadline.getTime() + 60 * 60 * 24 * 1000)
+      assigned_to: name.id,
+      deadline
     }).subscribe(allTodos => {
       this.createPagination(allTodos);
     })
@@ -193,13 +198,16 @@ export class MainTableComponent implements OnInit {
 
   editData(result: any): void {
     const todo = this.todos.filteredData[this.editIndexId];
-    const day = 24 * 60 * 60 * 1000;
+    console.log(todo)
+    console.log(4444)
+    result.deadline = moment(result.deadline);
+    result.deadline.set({D: result.deadline.day + 1, h: moment().format('h'), m: moment().format('m'), s: moment().format('s')});
     this.http.put(`${routes.serverURL}/${routes.todos}/${todo.id}`, {
-      deadline: typeof(result.deadline) === 'string' ? result.deadline : new Date(result.deadline.getTime() + day) || todo.date,
+      deadline: result.deadline,
       title: result.title || todo.title,
       description: result.description || todo.description,
-      state: result.state || todo.state_name,
-      assigned_to: result.assignTo.user_name || todo.assigned_to.user_name
+      state: result.state || todo.state,
+      assigned_to: result.assignTo.id || todo.user_id
     }).subscribe(allTodos => {
       this.createPagination(allTodos);
       this.todos.sort = this.sort;
@@ -225,7 +233,7 @@ export class MainTableComponent implements OnInit {
     this.unpaginatedTodos = data;
     for (let i = 0; i < data.length; i++) {
       data[i].position = i;
-      data[i].deadline = data[i].deadline.split('T')[0];
+      data[i].deadline = moment(data[i].deadline).format('YYYY-MM-DD');
     }
     this.todos = new MatTableDataSource(data);
     this.todos.paginator = this.paginator;

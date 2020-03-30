@@ -21,6 +21,7 @@ export class DialogShowUsersComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   users: any = [];
+  owners: any;
   selection = new SelectionModel(true, [])
   columns = ['select', 'name'];
 
@@ -30,16 +31,31 @@ export class DialogShowUsersComponent implements OnInit {
       // @ts-ignore
       this.users = new MatTableDataSource(allUsers);
       this.users.paginator = this.paginator;
+    });
+    this.http.get(`${routes.serverURL}/${routes.getOwners}`).subscribe(owners => {
+      this.owners = owners;
+      console.log(this.owners, 5555)
     })
   }
 
   delete() {
-    this.http.delete(`${routes.serverURL}/${routes.users}/${this.selection.selected.map(row => row.id)}`).subscribe(allUsersWithoutDeleted => {
-      // @ts-ignore
-      this.users = new MatTableDataSource(allUsersWithoutDeleted);
-      this.users.paginator = this.paginator;
-      this.snackBar.open(snack.user.delete, snack.undo);
-    });
+    let isThereAnOwner: boolean = false;
+    for(let i = 0; i < this.selection.selected.length; i++) {
+      if(this.owners.includes(this.selection.selected[i].user_name)) {
+        isThereAnOwner = true;
+        break;
+      }
+    }
+    if(isThereAnOwner) {
+      this.snackBar.open(snack.user.owner, snack.undo)
+    } else {
+      this.http.delete(`${routes.serverURL}/${routes.users}/${this.selection.selected.map(row => row.id)}`).subscribe(allUsersWithoutDeleted => {
+        // @ts-ignore
+        this.users = new MatTableDataSource(allUsersWithoutDeleted);
+        this.users.paginator = this.paginator;
+        this.snackBar.open(snack.user.delete, snack.undo);
+      });
+    }
   }
 
   isUserSelected(): boolean {

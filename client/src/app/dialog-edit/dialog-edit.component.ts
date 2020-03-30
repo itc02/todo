@@ -33,22 +33,24 @@ export class DialogEditComponent {
     public dialogRef: MatDialogRef<DialogEditComponent>, // To make this component dialog
     @Inject(MAT_DIALOG_DATA) public data: Todo, // To take data from where this dialog called
     private http: HttpClient // To make HTTP requests
-  ) {}
+  ) {
+    console.log(this.data.deadline.split(' ')[0].split('-').join('/'))
+  }
 
-  states: any
+  states = ['new', 'in progress', 'finished'];
   users: any;
   user: string;
   filteredOptions: Observable<User[]>;
   control = new FormControl();
-  initialDeadline = this.data.deadline;
+  initialDeadline = new Date(this.data.deadline);
   titleMaxLength = verification.title.length;
   descriptionMaxLength = verification.description.length;
   descriptionRows = verification.description.rows;
 
 //************************************************** Main methods ******************************************
   ngOnInit(): void {
-    this.getStates();
     this.getUsers();
+    console.log(this.data.state, '55')
   }
 
   getUsers(): void {
@@ -60,27 +62,23 @@ export class DialogEditComponent {
         map(name => name ? this._filter(name) : this.users.slice())
       );
       this.control.setValue({user_name: this.data.assignTo === dialog.editUsers.deletedUserSign ? '' : this.data.assignTo})
+      console.log(this.users)
     });
   }
 
-  getStates(): void {
-    this.http.get(`${routes.serverURL}/${routes.states}`).subscribe(allStates => {
-      this.states = allStates;
-    });
-  }
 //*********************************************** End of main methods ********************************************
 
 //******************************************* Methods for data verification *****************************************
   isDataValid(): boolean {
     return (
-      this.isTitileValid() &&
+      this.isTitleValid() &&
       this.isDeadlineValid() &&
       this.isUsernameValid() &&
       this.isDescriptionValid()
     )
   }
 
-  isTitileValid(): boolean {
+  isTitleValid(): boolean {
     return this.data.title && this.data.title.length <= this.titleMaxLength;
   }
 
@@ -102,7 +100,14 @@ export class DialogEditComponent {
   }
 //******************************************** Methods for autocomplete *****************************************
   setValue(user: string) {
-    this.control.setValue({user_name: user})
+    let id;
+    for(let i = 0; i < this.users.length; i++) {
+      if(this.users[i].user_name === user) {
+        id = this.users[i].id;
+        break;
+      }
+    }
+    this.control.setValue({user_name: user, id})
   }
 
   _filter(name: string): User[] {
