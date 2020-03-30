@@ -27,14 +27,14 @@
   <mat-label>
     Deadline
   </mat-label>
-  <input matInput="date" [matDatepicker]="picker" [(ngModel)]="data.deadline" [value]="data.deadline">
+  <input matInput="date" [matDatepicker]="picker" [(ngModel)]="data.deadline" readonly>
   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker></mat-datepicker>
+  <mat-datepicker [startAt]="initialDeadline" #picker></mat-datepicker>
 </mat-form-field>
 
 <mat-form-field>
   <mat-label>
-      Assign to
+    Assign to
   </mat-label>
   <input matInput [(ngModel)]="data.assignTo" [matAutocomplete]="auto" [formControl]="control" (input)="onInput($event)">
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">

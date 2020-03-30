@@ -10,20 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_20_152622) do
-
-  create_table "states", force: :cascade do |t|
-    t.string "state_name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
+ActiveRecord::Schema.define(version: 2020_03_30_075429) do
 
   create_table "todo_lists", force: :cascade do |t|
     t.string "title", null: false
     t.text "description", null: false
     t.datetime "deadline", null: false
     t.integer "user_id"
-    t.integer "state_id", null: false
+    t.string "state", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -34,6 +28,5 @@ ActiveRecord::Schema.define(version: 2020_03_20_152622) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "todo_lists", "states"
   add_foreign_key "todo_lists", "users", on_delete: :nullify
 end
